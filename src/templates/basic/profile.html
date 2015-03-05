@@ -1,0 +1,98 @@
+
+{% extends 'second_base.html' %}
+
+{% block second_content %}
+
+    {% if UserReq %}
+    <div class="col-md-2">
+    </div>
+    
+    <div class="col-md-7">
+     
+        <br></br>
+              
+      <form name="userForm"  class="form" method="post" action="{% url 'profile' %}">
+          <br></br>
+                  {% csrf_token %}
+                <h2 class="form-signin-heading">Profile</h2>
+               
+        <div class="form-group">
+          <div class="row">
+            <div class="col-md-6">
+
+             <div class="container-fluid">
+
+                  <label for="inputEmail">First Name</label>
+                  {% if not property %}
+                    <input type="text" id="inputEmail" title="Like 'Aditya'"class="form-control" placeholder="Enter your First Name"  name="fname" value="{{ UserReq.user.first_name }}"  required>
+                  {% else %}
+                    <p class="form-control-static">{{ UserReq.user.first_name }}</p>
+                  {% endif %}
+
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="container-fluid">
+                  <label for="inputEmail" >Last Name</label>
+                
+                {% if not property %}
+                  <input type="text" id="inputEmail" title="Like 'Kumar'"class="form-control" placeholder="Enter your Last Name"  name="lname" value="{{ UserReq.user.last_name }}" required>
+
+                  {% else %}
+                    <p class="form-control-static">{{ UserReq.user.last_name }}</p>
+                  {% endif %}
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-6">
+
+              <div class="container-fluid">
+                <label for="inputEmail" >Registration Number</label>
+                <p class="form-control-static">{{ UserReq.reg }}</p>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="container-fluid">
+                <label for="inputEmail"  >Email</label>
+                
+                    <p class="form-control-static">{{ UserReq.user.email }}</p>
+                {% if not property %}
+                    <input type="text" id="inputEmail" title="Like 'Kumar'"class="hidden" placeholder="Enter your Last Name"  name="email" value="{{ UserReq.user.email }}" required>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="container-fluid">
+              </div>
+            </div>
+          </div>
+
+                
+
+        </div>
+        {% if UserReq.user == user %}
+        <button class="btn btn-lg btn-primary btn-block" type="submit" >{{ button }}</button>
+        {% endif %}
+      </form>
+
+
+
+    </div>
+
+    {% else %}
+        <div class="alert alert-danger" role="alert">
+          <div class="row">
+                &nbsp; &nbsp;<strong> User Not Found!! </strong>
+           </div>
+        </div>
+    {% endif %}
+
+     
+{% endblock %}

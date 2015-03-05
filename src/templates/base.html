@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>SocNet</title>
+
+
+
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static "css/bootstrap.css" %}" rel="stylesheet">
+  <link href="{% static "css/sidebar.css" %}" rel="stylesheet">
+  <link href="{% static "css/signup.css" %}" rel="stylesheet">
+    <!-- Custom styles for this template 
+    <link href="css/jumbotron.css" rel="stylesheet"> -->
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]
+    <script src="../../assets/js/ie-emulation-modes-warning.js"></script> -->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+<script src="{% static "javascript/angular.js" %}" data-semver="1.2.5" data-require="angular.js@1.2.5"></script>
+
+
+  <body ng-app="app" ng-controller="NewUserController">
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+
+          <!-- The sidebar toggle button -->
+    <!--  {% if user.is_authenticated %}
+          <div class="nav navbar-nav navbar-left">
+            <div class="container-fluid">
+          <img src="{% static "images.jpeg" %}"  href="#menu-toggle" id="menu-toggle" style="border: 10;float:left; margin-top: 8px " class="sr-only" /> 
+        </div>
+      </div>
+      {% endif %} -->
+
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'home' %}">The SocNet</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          {% if not user.is_authenticated %}
+
+          <form class="navbar-form navbar-right" id="login_form" method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="form-group">
+              <input type="text" placeholder="Username" class="form-control" name="username" autofocus>
+            </div>
+            <div class="form-group">
+              <input type="password" placeholder="Password" class="form-control" name="password">
+            </div>
+            <button type="submit" class="btn btn-success">Sign in</button>
+          </form>
+          {% else %}
+
+        <ul class="nav navbar-nav navbar-right">
+
+<!-- Notifications -->
+{% if User.notifications.all %}
+         
+          <li class="dropdown">
+            <a  href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                  <img class="dropdown" src="{% static "notification_on.png" %}" height="18" width="18"  style="position:relative; top:1px; left:2px" > 
+                    <sup style="color:#FFF; position:relative; bottom:1px; right:3px;"> <strong> {{ User.notifications.all|length }} </strong></sup> </a>
+                  
+                  <ul class="dropdown-menu" role="menu" style="width:300px">
+                    {% for notification in User.notifications.all %}
+                    <li class="divider"></li>
+                    <li ><a href="{{ notification.link }}"> {{ notification.notification }}</a></li>
+                    {% endfor %}
+
+                  </ul>
+
+          </li>
+
+{% endif %}
+          <li> &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;</li>
+          <li> &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;</li>
+          <li class="dropdown">
+                  <a href="{% url 'profile' %}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{user.first_name}} <span class="caret"></span></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li class="divider"></li>
+                    <li class="dropdown-header">Nav header</li>
+                    <li><a href="{% url 'profile' %}">Profile</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                  </ul>
+          </li>
+
+        </ul>
+        {% endif %}
+        </div><!--/.navbar-collapse -->
+      </div>
+    </nav>
+
+{% block second_base %}
+{% endblock %}
+
+{% block content %}
+{% endblock %}
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{% static "javascript/jquery.min.js" %}" ></script> 
+    <script src="{% static "javascript/bootstrap.min.js" %}"></script> 
+    <script src="{% static "javascript/error.js" %}" ></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="{% static "javascript/ie10-workaround.js" %}"></script>
+     
+{% if user.is_authenticated %}
+     <script>
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
+    </script>
+  {% endif %}
+
+  {% block script %}
+
+{% endblock %}
+  </body>
+</html>

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block second_base %}
+
+
+<div id="wrapper">
+
+        <!-- Sidebar -->
+        
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">
+                        Start Bootstrap
+                    </a>
+                </li>
+                
+                
+              {% if User.courses.all %}
+                    {% for course in User.courses.all %}
+                      <li> <a href="{% url 'forum' %}{{ course.id }}"> {{ course.name }} </a> </li>
+                    {% endfor %}
+                
+              {% else %}
+                <li>  <strong style="color: #337AB7">You have no registered courses.</strong> </li>
+              {% endif %}
+
+              
+                <li class="divider" style="color: #337AB7"></li>
+
+                <li>
+                    <a href="#">Dummy</a>
+                </li>
+                <li>
+                    <a href="#">Dummy</a>
+                </li>
+                <li>
+                    <a href="#">Dummy</a>
+                </li>
+                <li>
+                    <a href="#">Dummy </a>
+
+                </li>
+                <li>
+                    <a href="#">Dummy</a>
+                </li>
+                
+            </ul>
+
+        </div>
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <br></br>
+    
+<div id="page-content-wrapper">
+
+{% block second_content %}
+{% endblock %}
+<hr>  
+<div class="container-fluid">
+      <footer>
+        <p>&copy; Company 2014</p>
+      </footer>
+    <!-- /container -->
+  </div>
+</div>
+</div>
+
+ 
+
+
+
+
+{% endblock %}
