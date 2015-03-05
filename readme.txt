@@ -12,7 +12,7 @@ Before runserver do a migrate, make sure to create a database socnet i think
 then run a createsuperuser to create an admin
 
 run admin site using 127.0.0.1:8000/admin
-Try the register process by entering your mnnit.ac.in email 
+Try the register process in the homepage by entering your mnnit.ac.in email 
 Also make sure the internet is working in order to send a mail
 
 Main website at 127.0.0.1:8000
