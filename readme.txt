@@ -22,7 +22,7 @@ It is advised not to use the admin to login
 The UserProfile model has a User model object and reg. no etc. This will have all the fields that we want to include in a user
 
 Create course using admin site to start using forums
-All add membership objects in the admin site to link user to course
+Also add membership objects in the admin site to link user to course
 
 The templates folder contains the htmls sorted acc. to app
 The static folder contains the css, js and images
