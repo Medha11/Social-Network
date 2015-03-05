@@ -15,9 +15,14 @@ run admin site using 127.0.0.1:8000/admin
 Try the register process by entering your mnnit.ac.in email 
 Also make sure the internet is working in order to send a mail
 
+Main website at 127.0.0.1:8000
+
 It is advised not to use the admin to login 
 
 The UserProfile model has a User model object and reg. no etc. This will have all the fields that we want to include in a user
+
+Create course using admin site to start using forums
+All add membership objects in the admin site to link user to course
 
 The templates folder contains the htmls sorted acc. to app
 The static folder contains the css, js and images
