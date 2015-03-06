@@ -1,4 +1,4 @@
-Download the whole thing using git clone i think
+Download the whole thing using git clone
 
 there is an activate file in bin/
 
