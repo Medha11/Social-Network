@@ -24,12 +24,8 @@ def forum(request, course_id, question_id=None):
 
 		else:
 			course = Course.objects.get(id=course_id)
-			 #Checking if user is enrolled
 			questions = ForumQuestion.objects.filter(course = course)
-			
 			return render(request,'forum/forum.html',{'questions':questions,'User':user,'id':course_id})
-
-		
 
 		
 	return HttpResponseRedirect('/')

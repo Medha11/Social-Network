@@ -12,17 +12,14 @@ import uuid
 
 def home(request):
 	user=getProfile(request)
-	return render(request, 'basic/homepage.html',{'User':user})
+	if user:
+		return render(request, 'basic/user_homepage.html',{'User':user})
+	return render(request, 'basic/homepage.html',{'type':"First"}) #type registration type
 
 def user_login(request):
-# If the request is a HTTP POST, try to pull out the relevant information.
 	if request.method == 'POST' and not request.user.is_authenticated():
-	# Gather the username and password provided by the 	user.
-	# This information is obtained from the login form.
 		username = request.POST['username']
 		password = request.POST['password']
-		# Use Django's machinery to attempt to see if the 	username/password
-		# combination is valid - a User object is returned if 	it is.
 		user = authenticate(username=username, 	password=password)
 		# If we have a User object, the details are correct.
 		# If None (Python's way of representing the absence 	of a value), no user
@@ -64,78 +61,87 @@ def register(request,code=None):
 
 	context={}
 	if request.method == 'POST':
-		context['label']=True		
-		context['type']= 'danger'
-		if len(request.POST)<3: #checking if initiating registration
-			email = request.POST['email']
-			if email.endswith('@mnnit.ac.in'):	
-				if User.objects.filter(email=email).exists():
-					context['message']='There is already an account with this Email Address!!!!'
-					context['tag']='Sorry!'
-					return render(request, 'basic/homepage.html', context)
+		try: # handling bad POST packets
+			context['label']=True		
+			context['type']= 'danger'
+			type = request.POST['type']
+			if type=="First": #checking if initiating registration
+				email = request.POST['email']
+				if email.endswith('@mnnit.ac.in'):	
+					if User.objects.filter(email=email).exists():
+						context['message']='There is already an account with this Email Address!!!!'
+						context['tag']='Sorry!'
+						print "dasasd"
+						return render(request, 'basic/homepage.html', context)
 
-				unique_code=uuid.uuid4().hex
-				if Register.objects.filter(email=email).exists():
-					entry=Register.objects.get(email=email)
-					unique_code=str(entry.code)
-				else:
-					#finding a unique_code
-					while Register.objects.filter(code=unique_code).exists():
-						unique_code=uuid.uuid4().hex
-					new_entry=Register(email=email,code=unique_code)
-					new_entry.save()
-					#sending email
+					unique_code=uuid.uuid4().hex
+					if Register.objects.filter(email=email).exists():
+						entry=Register.objects.get(email=email)
+						unique_code=str(entry.code)
+					else:
+						#finding a unique_code
+						while Register.objects.filter(code=unique_code).exists():
+							unique_code=uuid.uuid4().hex
+						new_entry=Register(email=email,code=unique_code)
+						new_entry.save()
+					
+					if confirmation(email,unique_code): #sending email
+						context['type']= 'success'
+						context['message']='A confirmation mail will be sent shortly to the email address you provided!!!!'
+						context['tag']='Great!'
+					else: #mail not sent
+						context['tag']='Sorry!'
+						context['message']='The server is unable to process your request. Please try again later or contact the Administrator!!!!'
 				
-				if confirmation(email,unique_code):
-					context['type']= 'success'
-					context['message']='A confirmation mail will be sent shortly to the email address you provided!!!!'
-					context['tag']='Great!'
-				else:
-					context['tag']='Sorry!'
-					context['message']='The server is unable to process your request. Please try again later or contact the Administrator!!!!'
-			else:
-				context['message']='Registration Failed!!!!'
-				context['tag']='Error!'
-				context['mnnit']=True
-			return render(request, 'basic/homepage.html', context)
+				else: #not mnnit email
+					context['message']='Registration Failed!!!!'
+					context['tag']='Error!'
+					context['mnnit']=True
+				return render(request, 'basic/homepage.html', context)
 
-		else:
-			email = request.POST['email']
-			code = request.POST['code']
-			fname = request.POST['fname']
-			lname = request.POST['lname']
-			reg = request.POST['reg']
-			password = request.POST['password']
-			username = request.POST['username']
-			if not Register.objects.filter(email=email).exists():
-				return HttpResponseRedirect('/')
-			if Register.objects.get(email=email).code != code:
-				context['message']='Nice Try!!!!'
-				context['tag']='Hacker Alert!'
-				return render(request,'basic/homepage.html', context)
-			if User.objects.filter(username=username).exists():
-				context['email']=email
-				context['fname']=fname
-				context['lname']=lname
-				context['reg']=reg
-				context['not_unique']=True
-				return render(request,'basic/register.html', context)
+			else: # registration step 2
+				email = request.POST['email']
+				code = request.POST['code']
+				fname = request.POST['fname']
+				lname = request.POST['lname']
+				reg = request.POST['reg']
+				password = request.POST['password']
+				username = request.POST['username']
+				if not Register.objects.filter(email=email).exists():
+					return HttpResponseRedirect('/')
+				if Register.objects.get(email=email).code != code:
+					context['message']='Nice Try!!!!'
+					context['tag']='Hacker Alert!'
+					return render(request,'basic/homepage.html', context)
+				if User.objects.filter(username=username).exists():
+					context['email']=email
+					context['fname']=fname
+					context['lname']=lname
+					context['reg']=reg
+					context['not_unique']=True
+					return render(request,'basic/register.html', context)
 
-			user=User.objects.create_user(email=email,first_name=fname, last_name=lname, username=username, password=password)
-			UserProfile(user=user,reg=str(reg)).save()
-			context['type']= 'success'
-			context['message']='Registration Successful. You can now login!!!!'
-			context['tag']='Congratulations!'
-			Register.objects.get(email=email).delete()
-			if request.user.is_authenticated():
-				logout(request)
-			return render(request, 'basic/homepage.html', context)
-	if not Register.objects.filter(code=code).exists():
+				user=User.objects.create_user(email=email,first_name=fname, last_name=lname, username=username, password=password)
+				UserProfile(user=user,reg=str(reg)).save()
+				context['type']= 'success'
+				context['message']='Registration Successful. You can now login!!!!'
+				context['tag']='Congratulations!'
+				Register.objects.get(email=email).delete()
+				if request.user.is_authenticated():
+					logout(request)
+				return render(request, 'basic/homepage.html', context)
+
+		except: return HttpResponseRedirect('/') #bad POST
+
+	# redirecting to step 2
+
+	if not Register.objects.filter(code=code).exists(): #checking if valid code
 		return HttpResponseRedirect('/')
 
 	context['email']=Register.objects.get(code=code).email
 	context['code']=code
-	return render(request, 'basic/register.html',context)
+	context['type'] = "Second"
+	return render(request, 'basic/register.html',context) # redirecting to step 2
 
 
 @login_required
@@ -144,11 +150,13 @@ def user_profile(request, username=None):
 # Take the user back to the homepage.
 	user=getProfile_user(request,username)
 
-	if request.method == 'POST':		
-		if len(request.POST)<2:
-			return render(request,'basic/profile.html',{'button':'Save',
-				'UserReq':user, 'User':getProfile(request)})
+	if request.method == 'POST':
 		try:
+			type = request.POST['type']		
+			if type == "edit":
+				return render(request,'basic/profile.html',{'button':'Save',
+					'UserReq':user, 'User':getProfile(request),'type':'save'})
+			
 			lname = request.POST['lname']
 			email = request.POST['email']
 			fname = request.POST['fname']
@@ -156,7 +164,9 @@ def user_profile(request, username=None):
 				request.user.first_name = fname
 				request.user.last_name = lname
 				request.user.save()
-		except: None
+
+		except: return HttpResponseRedirect('/')
+
 	return render(request,'basic/profile.html',{'property':True, 'button':'Edit',
-				 'UserReq':user, 'User':getProfile(request)})
+				 'UserReq':user, 'User':getProfile(request),'type':'edit'})
 

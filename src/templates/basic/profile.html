@@ -23,8 +23,9 @@
              <div class="container-fluid">
 
                   <label for="inputEmail">First Name</label>
+                  <input type="text" class="hidden" name="type"  value= "{{ type }}"required>
                   {% if not property %}
-                    <input type="text" id="inputEmail" title="Like 'Aditya'"class="form-control" placeholder="Enter your First Name"  name="fname" value="{{ UserReq.user.first_name }}"  required>
+                    <input type="text" id="inputEmail" title="Like 'Aditya'"class="form-control" placeholder="Enter your First Name"  name="fname" value="{{ UserReq.user.first_name }}" required>
                   {% else %}
                     <p class="form-control-static">{{ UserReq.user.first_name }}</p>
                   {% endif %}
