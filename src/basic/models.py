@@ -11,6 +11,7 @@ class UserProfile(models.Model):
 	courses = models.ManyToManyField('Course', through='Membership', through_fields=('student', 'course'))
 	notifications = models.ManyToManyField('Notification', through='SetNotification', 
 						through_fields=('user', 'notification'))
+	role = models.CharField(max_length=20, default="Student")
 
 	def __unicode__(self):
 		return self.user.username
@@ -36,6 +37,8 @@ class Membership(models.Model):
 class Notification(models.Model):
 	notification = models.TextField()
 	link = models.CharField(max_length=100)
+	def __unicode__(self):
+		return self.notification
 
 class SetNotification(models.Model):
 	notification = models.ForeignKey(Notification)

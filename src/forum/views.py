@@ -25,7 +25,9 @@ def forum(request, course_id, question_id=None):
 		else:
 			course = Course.objects.get(id=course_id)
 			questions = ForumQuestion.objects.filter(course = course)
-			return render(request,'forum/forum.html',{'questions':questions,'User':user,'id':course_id})
+			assignments = Assignment.objects.filter(course = course)
+			return render(request,'forum/forum.html',{'questions':questions,'User':user,'id':course_id, 
+														'assignments':assignments})
 
 		
 	return HttpResponseRedirect('/')
@@ -101,6 +103,18 @@ def post(request,course_id=None,question_id=None):
 					cur_answer.save()
 					Comment(comment=comment, user=user, answer = cur_answer, anonymous=anonymous).save()
 					return HttpResponseRedirect('/forum/'+course_id+'/'+question_id)
+
+			elif type=='Assignment':
+				title = request.POST['title']
+				description = request.POST['description'].replace('\n','<br>')
+				deadline = request.POST['date']
+				date = deadline[6:]+'-'+deadline[:2]+'-'+deadline[3:5]
+				new_assignment = Assignment(title=title, description=description, 
+					course=Course.objects.get(id=course_id), deadline=date)
+				if 'file' in request.FILES:
+					new_assignment.assignment = request.FILES['file']
+				new_assignment.save()
+				return HttpResponseRedirect('/forum/'+course_id)
 
 		
 

@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from basic import views
+from . import settings 
 
 urlpatterns = patterns('',
     # Examples:
@@ -17,3 +18,7 @@ urlpatterns = patterns('',
 	url(r'^profile/(?P<username>\w+)/$', views.user_profile, name='profiles'),
 	url(r'^forum/', include('forum.urls'), name='forum'),
 )
+
+if settings.DEBUG:
+	urlpatterns += patterns('django.views.static', (r'^media/(?P<path>.*)',
+		'serve', {'document_root': settings.MEDIA_ROOT}), )

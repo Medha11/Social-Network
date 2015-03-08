@@ -6,9 +6,66 @@
 
 <!-- Add question -->
 
-<button type="button" class="pull-right btn btn-default btn-lg" data-toggle="modal" data-target="#question" ><strong>Ask</strong></button>
+<button type="button" class="pull-right btn btn-default btn-lg" data-toggle="modal" data-target="#question" ><strong>Ask </strong></button> 
+
+
+{% if User.role == "Faculty" %}
+
+<button type="button" class="pull-middle btn btn-default btn-lg" data-toggle="modal" data-target="#Assignment" ><strong>Assign</strong> </button>  
+
+
+<!-- Post assignment modal -->
+
+
+
+<div class="modal fade" id="Assignment"  tabindex="-1" role="dialog" aria-labelledby="AssignmentLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="AssignmentLabel">Create Assignment</h4>
+      </div>
+      <div class="modal-body">
+        <form id="formform" method="post" action="{% url 'post' %}{{ id }}/0/" 
+        enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="title" class="control-label">Title:</label>
+            <input type="text" class="form-control" id="title" name="title" autofocus required>
+          </div>
+          <input type="text" class="hidden" name="type" value="Assignment" required>
+          <div class="form-group">
+            <label for="Question" class="control-label">Description: (Optional)</label>
+            <textarea class="form-control" id="description" name="description" ></textarea>
+          </div>
+          <div class="form-group">
+         
+            <label for="date" class="control-label">Deadline:</label>
+            <input type="text" class="form-control"  id="date" name="date" placeholder="Click to bring datepicker" required>
+          
+          </div>
+
+          <span class = "btn btn-primary" style="position: relative; overflow: hidden;"> Upload Assignment<input type="file" name="file"> </input> </span>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" form="formform">Ask</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endif %}
+
 <br></br>
 <br>
+
+
+<!-- Post question modal -->
 
 <div class="modal fade" id="question"  tabindex="-1" role="dialog" aria-labelledby="questionLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -18,13 +75,12 @@
         <h4 class="modal-title" id="questionLabel">???</h4>
       </div>
       <div class="modal-body">
-        <form id="formform" method="post" action="{% url 'post' %}{{ id }}/0/">
+        <form id="form_question" method="post" action="{% url 'post' %}{{ id }}/0/">
           {% csrf_token %}
           <div class="form-group">
             <label for="title" class="control-label">Title:</label>
             <input type="text" class="form-control" id="title" name="title" autofocus required>
           </div>
-          <input type="number" class="hidden" name="id" value="{{ id }}" required>
           <input type="text" class="hidden" name="type" value="question" required>
           <div class="form-group">
             <label for="Question" class="control-label">Question:</label>
@@ -41,11 +97,12 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" form="formform">Ask</button>
+        <button type="submit" class="btn btn-primary" form="form_question">Ask</button>
       </div>
     </div>
   </div>
 </div>
+
 
 <!-- Modal for confirming delete -->
 
@@ -66,65 +123,144 @@
   </div>
 </div>
 
+<!-- Tabs -->
+
+<ul id="myTab" class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active"><a href="#forum" id="forum-tab" role="tab" data-toggle="tab" aria-controls="forum" aria-expanded="true">Forum <span class="badge"></span> </a></li>
+      <li role="presentation"><a href="#assignment" role="tab" id="assignment-tab" data-toggle="tab" aria-controls="assignment">Assignment <span class="badge">{{ assignments|length }}</span></a></li>
+    <!--  <li role="presentation" class="dropdown">
+        <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown" aria-controls="myTabDrop1-contents">Dropdown <span class="caret"></span></a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1" id="myTabDrop1-contents">
+          <li><a href="#dropdown1" tabindex="-1" role="tab" id="dropdown1-tab" data-toggle="tab" aria-controls="dropdown1">@fat</a></li>
+          <li><a href="#dropdown2" tabindex="-1" role="tab" id="dropdown2-tab" data-toggle="tab" aria-controls="dropdown2">@mdo</a></li>
+        </ul>
+      </li> -->
+</ul>
 
 
+<br>
+<div id="myTabContent" class="tab-content">
+  <div role="tabpanel" class="tab-pane fade in active" id="forum" aria-labelledBy="forum-tab">
 
-<!-- Current Questions -->
 
-{% if questions %}
+    <!-- Current Questions -->
 
-  {% for question in questions %}
-    <div class="panel panel-default">
-        
-      <ul class="list-group">
+    {% if questions %}
 
-         <div class="panel-header">
-          {% if question.user.user == user %} <!-- Checking if question posted by current user -->
+      {% for question in questions %}
+        <div class="panel panel-default">
+            
+          <ul class="list-group">
 
-          <a data-url="{% url 'delete_post' %}q/{{ id }}/{{ question.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:10px; bottom:10px"> <span>&times;</span></a> <!-- Delete button -->
+             <div class="panel-header">
+              {% if question.user.user == user or User.role == "Faculty" %} <!-- Checking if question posted by current user -->
 
-          {% endif %}
-          <h2>  &nbsp;  {{ question.title }} </h2> 
+              <a data-url="{% url 'delete_post' %}q/{{ id }}/{{ question.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:10px; bottom:10px"> <span>&times;</span></a> <!-- Delete button -->
+
+              {% endif %}
+
+              <h2>  &nbsp;  {{ question.title }} </h2> 
+              
+            </div>
+
           
+        
+             
+            <div id="collapse{{ question.id }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+              <div class="panel-body" style="background-color:transparent">
+                
+                {{ question.question|safe }}
+
+                <br> <br>
+                  <li class="list-group-item" style="background-color:transparent">
+                      <a href="{% url 'forum' %}{{ id }}/{{ question.id }}" class="btn btn-default btn-lg" >View Answers <span class="badge">{{ question.number_of_answers  }}</span></a>
+                      <span class="pull-right" >  
+                      {% if question.anonymous %}
+                        <strong> Asked By: </strong> Anonymous <br>
+                      {% else %}
+                        <strong> Asked By: </strong> <a href="{% url 'profile' %}{{ question.user.user.username }}"> {{ question.user.user.get_full_name }} </a> <br>
+                      {% endif %}
+                        <strong> Asked At: </strong> {{ question.date  }}
+                      </span>
+                  </li>
+                
+              </div>
+            </div>
         </div>
 
+      {% endfor %}
+
+    {% else %}
+        <div class="alert alert-info" role="alert">
+          <div class="row">
+                &nbsp; &nbsp;<strong> Be the first one to ask!!!! </strong>
+           </div>
+        </div>
       
-    
-         
-        <div id="collapse{{ question.id }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-          <div class="panel-body" style="background-color:transparent">
+    {% endif %}  
+  </div>
+
+  <div role="tabpanel" class="tab-pane fade" id="assignment" aria-labelledBy="assignment-tab">
+
+  <!-- Checking for assignments in forum -->
+    {% if assignments %}
+
+      {% for assignment in assignments %}
+        <div class="panel panel-default">
             
-            {{ question.question|safe }}
-            <br> <br>
-              <li class="list-group-item" style="background-color:transparent">
-                  <a href="{% url 'forum' %}{{ id }}/{{ question.id }}" class="btn btn-default btn-lg" >View Answers <span class="badge">{{ question.number_of_answers  }}</span></a>
-                  <span class="pull-right" >  
-                  {% if question.anonymous %}
-                    <strong> Asked By: </strong> Anonymous <br>
-                  {% else %}
-                    <strong> Asked By: </strong> <a href="{% url 'profile' %}{{ question.user.user.username }}"> {{ question.user.user.get_full_name }} </a> <br>
-                  {% endif %}
-                    <strong> Asked At: </strong> {{ question.date  }}
-                  </span>
-              </li>
-            
-          </div>
+          <ul class="list-group">
+
+             <div class="panel-header">
+              <h2>  &nbsp;  {{ assignment.title }}  </h2> 
+              
+            </div>
+
+          
+        
+             
+            <div id="collapse{{ question.id }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+              <div class="panel-body" style="background-color:transparent">
+                
+                {{ assignment.description|safe }}
+                <br> </br>
+
+                <a class="btn btn-primary" href="{% url 'home' %}media/{{ assignment.assignment }}"> Download Assignment </a>
+
+                <br> <br>
+                  <li class="list-group-item" style="background-color:transparent">
+               <!--       <a href="{% url 'forum' %}{{ id }}/{{ question.id }}" class="btn btn-default btn-lg" >View Answers <span class="badge">{{ question.number_of_answers  }}</span></a> -->
+                      <span class="pull-right" >  
+                <!--      {% if question.anonymous %}
+                        <strong> Asked By: </strong> Anonymous <br>
+                      {% else %}
+                        <strong> Asked By: </strong> <a href="{% url 'profile' %}{{ question.user.user.username }}"> {{ question.user.user.get_full_name }} </a> <br>
+                      {% endif %} -->
+                        <strong> Assigned At: </strong> {{ assignment.date  }}
+                        <br>
+                        <strong> Deadline: </strong> {{ assignment.deadline  }}
+                      </span>
+                  </li>
+                
+              </div>
+            </div>
         </div>
-    </div>
 
-  {% endfor %}
+      {% endfor %}
 
-{% else %}
-    <div class="alert alert-info" role="alert">
-      <div class="row">
-            &nbsp; &nbsp;<strong> Be the first one to ask!!!! </strong>
-       </div>
-    </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+          <div class="row">
+                &nbsp; &nbsp;<strong> There are no assignments currently!!!! </strong>
+           </div>
+        </div>
+      
+    {% endif %}  
+  </div>
+
+</div>
   
-{% endif %}  
-     
 {% endblock %}
-
+  
 
 {% block script %}
 <!-- Script to decide the attributes of the modal 
@@ -142,6 +278,13 @@ $('#delete').on('show.bs.modal', function (e) {
   modal.find('.modal-body a[id="confirm"]').attr('href', url);
 });
 
+</script>
+
+
+<script>
+ 
+$('#date').datepicker();
+ 
 </script>
 
 {% endblock %}

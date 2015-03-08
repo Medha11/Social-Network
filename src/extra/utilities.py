@@ -71,3 +71,7 @@ class Answer():
 	def __init__(self, answer):
 		self.answer = answer
 		self.comments = Comment.objects.filter(answer=answer)
+
+def upload_to_function(instance, filename): #function for dynamic file handling for assignments
+	import os
+	return os.path.join('assignment',instance.course.course_id,filename)

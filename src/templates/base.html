@@ -20,6 +20,7 @@
   <link href="{% static "css/sidebar.css" %}" rel="stylesheet">
   <link href="{% static "css/signup.css" %}" rel="stylesheet">
   <link href="{% static "css/fileinput.css" %}" rel="stylesheet">
+   <link href="{% static "css/jquery-ui.min.css" %}" rel="stylesheet">
     <!-- Custom styles for this template 
     <link href="css/jumbotron.css" rel="stylesheet"> -->
 
@@ -131,6 +132,11 @@
     <script src="{% static "javascript/error.js" %}" ></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="{% static "javascript/ie10-workaround.js" %}"></script>
+    
+<script src="{% static "javascript/jquery.js" %}"></script>
+<script src="{% static "javascript/jquery-ui.js" %}"></script>
+
+    
      
 {% if user.is_authenticated %}
      <script>
@@ -141,8 +147,9 @@
     </script>
   {% endif %}
 
-  {% block script %}
+{% block script %}
 
 {% endblock %}
+
   </body>
 </html>

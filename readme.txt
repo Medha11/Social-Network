@@ -1,3 +1,30 @@
+TODO
+
+-> Follow button for questions and proper notifications on new answers
+-> Upvotes and downvotes for answers
+-> Sorting answers according to votes, date
+-> Badges for questions not viewed
+
+-> Assignment submission 
+-> Assignment Overview for professor
+-> File name display for uploads
+-> Optional multiple files
+
+
+-> Deadline countdown
+-> Proper date time conversions
+
+-> Dynamic notifications
+
+-> Proper profiles
+-> Course assigning interface for adding professors and students to course(optional)
+-> Answers statistics
+
+-> TPO views
+
+
+Instructions
+
 Download the whole thing using git clone i think
 
 there is an activate file in bin/
