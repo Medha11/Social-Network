@@ -1,8 +1,12 @@
-
 {% extends 'second_base.html' %}
+{% load staticfiles%}
 
 {% block second_content %}
 
+<!-- Datepicker css -->
+
+
+   <link href="{% static "css/jquery-ui.min.css" %}" rel="stylesheet">
 
 <!-- Add question -->
 
@@ -281,10 +285,13 @@ $('#delete').on('show.bs.modal', function (e) {
 </script>
 
 
-<script>
- 
-$('#date').datepicker();
- 
+<!-- Datepicker javascript -->
+
+<script src="{% static "javascript/jquery.js" %}"></script>
+<script src="{% static "javascript/jquery-ui.js" %}"></script>
+
+<script> 
+  $('#date').datepicker(); 
 </script>
 
 {% endblock %}

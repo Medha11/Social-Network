@@ -7,14 +7,14 @@
 
 
 
-<div class="modal fade" id="post" role="dialog" aria-labelledby="postLabel" aria-hidden="true">
+<div class="modal fade" id="post_modal" role="dialog" aria-labelledby="post_modalLabel" aria-hidden="true">
 
 
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="postLabel">???s</h4>
+        <h4 class="modal-title" id="post_modalLabel">???s</h4>
       </div>
       <div class="modal-body">
         <form id="formform" method="post" action="{% url 'post' %}{{ course_id }}/{{ question.id }}/">
@@ -94,7 +94,7 @@
             {{ question.question|safe }}
           <br><br>
             <li class="list-group-item" style="background-color:transparent">  
-                <button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#post" data-type="Answer" data-ans="" >Answer &raquo;</button>
+                <button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#post_modal" data-type="Answer" data-ans="" >Answer &raquo;</button>
 
                 <span class="pull-right" > 
                 {% if question.anonymous %}
@@ -131,7 +131,7 @@
             <ul class="list-group">
               <li class="list-group-item">  
                 
-                  <button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#post" data-type="Comment" data-ans="{{ Answer.answer.id }}">Comment</button>
+                  <button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#post_modal" data-type="Comment" data-ans="{{ Answer.answer.id }}">Comment</button>
               
                 {% if Answer.comments %}
 
@@ -216,30 +216,30 @@
 
 
 
-<script>
+  <script>
 
-$('#post').on('show.bs.modal', function (e) {
-  var button = $(e.relatedTarget); // Button that triggered the modal
-  var type = button.data('type');
-  var answer = button.data('ans') // Extract info from data-* attributes
-  // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-  // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-  var modal = $(this);
-  modal.find('.modal-title').text('Post '+type);
-  modal.find('.modal-body label[for="post"]').text(type+':');
-  modal.find('.modal-body input[name="type"]').val(type);
-  modal.find('.modal-body input[name="answer"]').val(answer);
-});
+    $('#post_modal').on('show.bs.modal', function (e) {
+      var button = $(e.relatedTarget); // Button that triggered the modal
+      var type = button.data('type');
+      var answer = button.data('ans') // Extract info from data-* attributes
+      // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+      // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+      var modal = $(this);
+      modal.find('.modal-title').text('Post '+type);
+      modal.find('.modal-body label[for="post"]').text(type+':');
+      modal.find('.modal-body input[name="type"]').val(type);
+      modal.find('.modal-body input[name="answer"]').val(answer);
+    });
 
 
-$('#delete').on('show.bs.modal', function (e) {
-  var button = $(e.relatedTarget); // Button that triggered the modal
-  var url = button.data('url');
-  var modal = $(this);
-  modal.find('.modal-body a[id="confirm"]').attr('href', url);
-});
+    $('#delete').on('show.bs.modal', function (e) {
+      var button = $(e.relatedTarget); // Button that triggered the modal
+      var url = button.data('url');
+      var modal = $(this);
+      modal.find('.modal-body a[id="confirm"]').attr('href', url);
+    });
 
-</script>
+  </script>
 
 
 {% endblock %}

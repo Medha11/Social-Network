@@ -1,4 +1,4 @@
-TODO (Change as required)
+TODO
 
 -> Follow button for questions and proper notifications on new answers
 -> Upvotes and downvotes for answers
@@ -25,7 +25,7 @@ TODO (Change as required)
 
 Instructions
 
-Download the whole thing using git clone https
+Download the whole thing using git clone i think
 
 there is an activate file in bin/
 

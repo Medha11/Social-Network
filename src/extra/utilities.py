@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
 from basic.models import *
-from forum.models import *
+
 
 
 ############################################################################################
@@ -69,6 +69,7 @@ def make_notification(course_id):
 class Answer():
 
 	def __init__(self, answer):
+		from forum.models import *
 		self.answer = answer
 		self.comments = Comment.objects.filter(answer=answer)
 
