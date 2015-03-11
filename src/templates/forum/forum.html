@@ -49,7 +49,14 @@
           
           </div>
 
-          <span class = "btn btn-primary" style="position: relative; overflow: hidden;"> Upload Assignment<input type="file" name="file"> </input> </span>
+          <div class="row">
+            <div class="col-md-2">
+              <span class = "btn btn-primary" style="position: relative; overflow: hidden;"> Upload File<input type="file" name="files" id="assign_file" multiple> </input> </span>
+            </div>
+            <div class="col-md-10" >
+              <input type="text" class="form-control" readonly id="filename" name="filename" placeholder="No files uploaded">
+            </div>
+          </div>
 
         </form>
       </div>
@@ -228,7 +235,7 @@
                 {{ assignment.description|safe }}
                 <br> </br>
 
-                <a class="btn btn-primary" href="{% url 'home' %}media/{{ assignment.assignment }}"> Download Assignment </a>
+                <a class="btn btn-primary" href="{% url 'home' %}media/{{ assignment.file }}"> Download Assignment </a>
 
                 <br> <br>
                   <li class="list-group-item" style="background-color:transparent">
@@ -281,6 +288,29 @@ $('#delete').on('show.bs.modal', function (e) {
   var modal = $(this);
   modal.find('.modal-body a[id="confirm"]').attr('href', url);
 });
+
+// Displaying filenames of multiple filenames
+
+$("#assign_file").on("change", function(){
+   var files = this.files,
+       fileName = "\""+files[0].name+"\"";
+
+    for (var i=1; i<files.length; i++){
+      fileName+=", "+"\""+files[i].name+"\"";
+    }
+    var elem = document.getElementById("filename");
+    elem.value = fileName;
+   
+});
+
+    // reset modal on close
+        $('#Assignment').on('hidden.bs.modal', function(){
+            $(this).find('form')[0].reset();
+        });
+
+        $('#question').on('hidden.bs.modal', function(){
+            $(this).find('form')[0].reset();
+        });
 
 </script>
 

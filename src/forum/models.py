@@ -41,8 +41,11 @@ class Assignment(models.Model):
 	description = models.TextField(blank=True)
 	date = models.DateTimeField(auto_now_add=True)
 	course = models.ForeignKey(Course, default=None)
-	assignment = models.FileField(blank=True, upload_to=upload_to_function)
 	deadline = models.DateTimeField()
+	file = models.FileField(upload_to=upload_to_function)
 
 	def __unicode__(self):
 		return self.title
+
+
+	

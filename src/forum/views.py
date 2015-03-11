@@ -43,7 +43,7 @@ def delete_post(request,type="",course_id=None,post_id=None):
 		if type == 'q':
 			if ForumQuestion.objects.filter(id=post_id).exists(): #Checking if question exists
 				question=ForumQuestion.objects.get(id=post_id)
-				if user == question.user:
+				if user == question.user: #confirming that the post belongs to user
 					question.delete()
 				return HttpResponseRedirect('/forum/'+course_id)
 		elif type =='a':
@@ -111,9 +111,10 @@ def post(request,course_id=None,question_id=None):
 				date = deadline[6:]+'-'+deadline[:2]+'-'+deadline[3:5]
 				new_assignment = Assignment(title=title, description=description, 
 					course=Course.objects.get(id=course_id), deadline=date)
-				if 'file' in request.FILES:
-					new_assignment.assignment = request.FILES['file']
-				new_assignment.save()
+				new_assignment
+				if 'files' in request.FILES:
+					create_assignment(request.FILES.getlist('files'),course_id,new_assignment)
+
 				return HttpResponseRedirect('/forum/'+course_id)
 
 		

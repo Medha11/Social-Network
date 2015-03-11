@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
 from basic.models import *
+from socnet import settings
 
 
 
@@ -69,10 +70,42 @@ def make_notification(course_id):
 class Answer():
 
 	def __init__(self, answer):
-		from forum.models import *
+		from forum.models import Comment
 		self.answer = answer
 		self.comments = Comment.objects.filter(answer=answer)
 
 def upload_to_function(instance, filename): #function for dynamic file handling for assignments
 	import os
-	return os.path.join('assignment',instance.course.course_id,filename)
+	return os.path.join('assignment',instance.course.course_id,instance.title,filename)
+
+
+def create_assignment(files,id,assignment):
+	import os
+	import zipfile	
+	from django.core.files import File
+	BASE = os.path.join(settings.BASE_DIR,'temp',id)
+	try:
+		os.makedirs(BASE)
+	except: None
+	os.chdir(BASE)
+	zipf = zipfile.ZipFile('Python.zip', 'w')
+	for file in files:
+		file_path = os.path.join(BASE,file.name)
+		with open(file_path, 'wb+') as destination:
+			for chunk in file.chunks():
+				destination.write(chunk)
+			destination.close()
+		zipf.write(file.name)
+		os.remove(file.name)
+	zipf.close()
+	ZIP = os.path.join(BASE,'Python.zip')
+	zipf=open(ZIP)
+	assignment.file.save(assignment.title+'.zip',File(zipf))
+	assignment.save()
+	zipf.close()
+	os.remove(ZIP)
+	os.rmdir(BASE)
+
+	
+	
+
