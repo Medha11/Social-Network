@@ -5,10 +5,10 @@ TODO
 -> Sorting answers according to votes, date
 -> Badges for questions not viewed
 
--> Assignment submission 
+
 -> Assignment Overview for professor
 -> File name display for uploads
--> Optional multiple files
+
 
 
 -> Deadline countdown
@@ -21,6 +21,11 @@ TODO
 -> Answers statistics
 
 -> TPO views
+
+DONE
+
+-> Assignment submission 
+-> Optional multiple files
 
 
 Instructions
