@@ -1,6 +1,6 @@
 {% extends 'second_base.html' %}
-{% load staticfiles%}
-
+{% load staticfiles %}
+{% load time_short %}
 {% block second_content %}
 
 <!-- Datepicker css -->
@@ -138,7 +138,19 @@
 
 <ul id="myTab" class="nav nav-tabs" role="tablist">
       <li role="presentation" class="active"><a href="#forum" id="forum-tab" role="tab" data-toggle="tab" aria-controls="forum" aria-expanded="true">Forum <span class="badge"></span> </a></li>
-      <li role="presentation"><a href="#assignment" role="tab" id="assignment-tab" data-toggle="tab" aria-controls="assignment">Assignment <span class="badge">{{ assignments|length }}</span></a></li>
+      <li role="presentation"><a href="#assignment" role="tab" id="assignment-tab" data-toggle="tab" aria-controls="assignment">Assignments
+
+        
+
+          {% if assignments %}
+            <span class="badge"> {{ assignments|length }}</span>
+          {% endif %}
+
+
+        
+
+
+      </a></li>
     <!--  <li role="presentation" class="dropdown">
         <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown" aria-controls="myTabDrop1-contents">Dropdown <span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1" id="myTabDrop1-contents">
@@ -191,7 +203,7 @@
                       {% else %}
                         <strong> Asked By: </strong> <a href="{% url 'profile' %}{{ question.user.user.username }}"> {{ question.user.user.get_full_name }} </a> <br>
                       {% endif %}
-                        <strong> Asked At: </strong> {{ question.date  }}
+                        <strong> Asked: </strong> {{ question.date|age  }}
                       </span>
                   </li>
                 
@@ -234,8 +246,9 @@
                 
                 {{ assignment.description|safe }}
                 <br> </br>
-
-                <a class="btn btn-primary" href="{% url 'home' %}media/{{ assignment.file }}"> Download Assignment </a>
+                {% if assignment.file %}
+                  <a class="btn btn-primary" href="{% url 'home' %}media/{{ assignment.file }}"> Download Assignment </a>
+                {%  endif %}
 
                 <br> <br>
                   <li class="list-group-item" style="background-color:transparent">
@@ -246,9 +259,9 @@
                       {% else %}
                         <strong> Asked By: </strong> <a href="{% url 'profile' %}{{ question.user.user.username }}"> {{ question.user.user.get_full_name }} </a> <br>
                       {% endif %} -->
-                        <strong> Assigned At: </strong> {{ assignment.date  }}
+                        <strong> Assigned: </strong> {{ assignment.date|age  }}
                         <br>
-                        <strong> Deadline: </strong> {{ assignment.deadline  }}
+                        <strong> Time left: </strong> {{ assignment.deadline|until  }}
                       </span>
                   </li>
                 

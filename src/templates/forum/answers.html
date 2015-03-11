@@ -1,6 +1,6 @@
 
 {% extends 'second_base.html' %}
-
+{% load time_short %}
 {% block second_content %}
 
 <!-- Post answer or comments -->
@@ -102,7 +102,7 @@
                 {% else %} 
                   <strong> Asked By: </strong> <a href="{% url 'profile' %}{{ question.user.user.username }}"> {{ question.user.user.get_full_name }} </a> <br>
                 {% endif %}
-                  <strong> Asked At: </strong> {{ question.date }}
+                  <strong> Asked: </strong> {{ question.date|age }}
                 </span>
             </li>  
           </div>
@@ -145,7 +145,7 @@
                     {% else %}
                       <strong> Answered By: </strong> <a href="{% url 'profile' %}{{ Answer.answer.user.user.username }}"> {{ Answer.answer.user.user.get_full_name }} </a> <br>
                     {% endif %}
-                      <strong> Answered At: </strong> {{ Answer.answer.date }}
+                      <strong> Answered: </strong> {{ Answer.answer.date|age }}
                   </span>
               </li> 
              </ul> 
@@ -176,7 +176,7 @@
                             {% else %}
                             <strong> Posted By: </strong> <a href="{% url 'profile' %}{{ comment.user.user.username }}"> {{ comment.user.user.get_full_name }} </a> <br>
                             {% endif %}
-                            <strong> Posted At: </strong> {{ comment.date }}
+                            <strong> Posted: </strong> {{ comment.date|age }}
                           </span>
                       </div>
                       <br>

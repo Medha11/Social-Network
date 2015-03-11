@@ -111,9 +111,11 @@ def post(request,course_id=None,question_id=None):
 				date = deadline[6:]+'-'+deadline[:2]+'-'+deadline[3:5]
 				new_assignment = Assignment(title=title, description=description, 
 					course=Course.objects.get(id=course_id), deadline=date)
-				new_assignment
+				
 				if 'files' in request.FILES:
 					create_assignment(request.FILES.getlist('files'),course_id,new_assignment)
+				else:
+					new_assignment.save()
 
 				return HttpResponseRedirect('/forum/'+course_id)
 
