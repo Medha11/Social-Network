@@ -5,14 +5,8 @@ TODO
 -> Sorting answers according to votes, date
 -> Badges for questions not viewed
 
-
+-> Upload assignment solutions
 -> Assignment Overview for professor
--> File name display for uploads
-
-
-
--> Deadline countdown
--> Proper date time conversions
 
 -> Dynamic notifications
 
@@ -26,6 +20,9 @@ DONE
 
 -> Assignment submission 
 -> Optional multiple files
+-> File name display for uploads
+-> Deadline countdown
+-> Proper date time conversions
 
 
 Instructions
