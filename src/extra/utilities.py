@@ -23,10 +23,71 @@ def getProfile_user(request,username):
 		return UserProfile.objects.get(user=User.objects.get(username=username))
 	return None
 
-def getProfile(request):
+def getProfile(request):	
 	if request.user.is_authenticated():
 		return UserProfile.objects.get(user=request.user)
 	return None
+
+def make_notification(course_id,user):
+	course = Course.objects.get(id=course_id)
+	students = course.students.all()
+	link = '/forum/' + course_id
+	object_id = course.id
+	new_notification=Notification(type='Question',user_name = user.user.first_name, link=link, object_id=object_id)
+	new_notification.save()
+	for student in students:
+		SetNotification(notification=new_notification,user=student,link=link).save()
+
+
+def get_notifications(user): #function for consolidated notifications
+	list = []
+	if user.notifications.filter(type='Question').exists():
+		questions = user.notifications.filter(type='Question')
+		for course in user.courses.all():
+
+			course_questions = questions.filter(object_id=course.id)
+			length = len(course_questions)
+			names = course_questions.values("user_name").distinct()
+			unique_length = len(names)
+			
+			notification = None
+			if unique_length == 1:
+				notification = '<strong>' + names[0]['user_name'] +'</strong>'
+				if length == 1:
+					notification += ' asked a question in the ' 
+				else:
+					notification += ' asked questions in the '
+				notification+= '<strong>' + course.name + '</strong> forum'
+			elif unique_length == 2:
+				user1 = names[0]['user_name']
+				user2 =	names[1]['user_name']
+				
+				notification = '<strong>'+user1+'</strong>' + ' and ' 
+				notification+= '<strong>'+user2+'</strong>'
+				notification+= ' asked questions in the ' + '<strong>'+course.name + '</strong> forum'
+
+			elif unique_length > 2:
+				user1 = names[0]['user_name']
+				notification = '<strong>' + user1+'</strong>' + ' and <strong>' + str(unique_length-1) 
+				notification+= ' others</strong>  asked questions in the ' + '<strong>'+course.name + '</strong> forum'
+			if notification:
+				list.append(ConsolidatedNotifications(notification,course_questions[0].link))
+	return list
+
+
+	
+class ConsolidatedNotifications: #class for returning consolidated notifications
+
+	def __init__(self, notification, link):
+		self.notification = notification
+		self.link = link 
+
+def update_notifications(user, id):  #functions deletes visited notifications
+	print user.id
+	link = '/forum/'+id
+	SetNotification.objects.filter(user=user,link=link).delete()
+	return get_notifications(user)
+
 
 #confimation mail
 def confirmation(email,unique_code):
@@ -49,25 +110,16 @@ def confirmation(email,unique_code):
 	return False
 
 def authorize(profile, course_id):
-	if profile.courses.all().filter(id=course_id).exists():
+	if profile.courses.filter(id=course_id).exists():
 		return True
 	return False
 
-def make_notification(course_id):
-	course = Course.objects.get(id=course_id)
-	students = course.students.all()
-	notification = 'A question has been posted in '+course.name
-	link = '/forum/' + course_id
-	new_notification=Notification(notification=notification, link=link)
-	new_notification.save()
-	for student in students:
-		print student
-		SetNotification(notification=new_notification,user=student).save()
+
 
 
 #This class is used to create an object for the html which incorporates both answers and comments
 
-class Answer():
+class Answer:
 
 	def __init__(self, answer):
 		from forum.models import Comment
@@ -106,6 +158,8 @@ def create_assignment(files,id,assignment):
 	os.remove(ZIP)
 	os.rmdir(BASE)
 
+
+
 	
-	
+
 

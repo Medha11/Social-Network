@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 
 class UserProfile(models.Model):
@@ -35,11 +37,20 @@ class Membership(models.Model):
 
 
 class Notification(models.Model):
-	notification = models.TextField()
+	type = models.CharField(max_length=100)
+
+# generic object for type
+	object_id = models.IntegerField(blank = True)
+	
+	user_name = models.CharField(max_length=50)
 	link = models.CharField(max_length=100)
+
 	def __unicode__(self):
-		return self.notification
+		return self.type
+
+
 
 class SetNotification(models.Model):
 	notification = models.ForeignKey(Notification)
 	user = models.ForeignKey(UserProfile)
+	link = models.CharField(max_length=100)

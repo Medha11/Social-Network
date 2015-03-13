@@ -11,6 +11,7 @@ from extra.utilities import *
 def forum(request, course_id, question_id=None):
 
 	user=getProfile(request)
+	notifications = get_notifications(user)
 	if authorize(user,course_id): #Checking if course exists and user is part of it
 		if question_id: #Checking if display answer page
 			if ForumQuestion.objects.filter(id=question_id).exists():  #Checking if question exists
@@ -20,14 +21,15 @@ def forum(request, course_id, question_id=None):
 				for answer in answers:
 					new_answers.append(Answer(answer))
 			return render(request,'forum/answers.html',{'question':question, 'answers':new_answers, 
-						'User':user, 'course_id':course_id})
+						'User':user, 'course_id':course_id, 'Notifications':notifications})
 
 		else:
+			notifications = update_notifications(user, course_id)
 			course = Course.objects.get(id=course_id)
 			questions = ForumQuestion.objects.filter(course = course)
 			assignments = Assignment.objects.filter(course = course)
 			return render(request,'forum/forum.html',{'questions':questions,'User':user,'id':course_id, 
-														'assignments':assignments})
+														'assignments':assignments,'Notifications':notifications})
 
 		
 	return HttpResponseRedirect('/')
@@ -43,13 +45,13 @@ def delete_post(request,type="",course_id=None,post_id=None):
 		if type == 'q':
 			if ForumQuestion.objects.filter(id=post_id).exists(): #Checking if question exists
 				question=ForumQuestion.objects.get(id=post_id)
-				if user == question.user: #confirming that the post belongs to user
+				if user.role == 'Faculty' or user == question.user: #confirming that the post belongs to user
 					question.delete()
 				return HttpResponseRedirect('/forum/'+course_id)
 		elif type =='a':
 			if ForumAnswer.objects.filter(id=post_id).exists():
 				answer=ForumAnswer.objects.get(id=post_id)
-				if user == answer.user:
+				if user.role == 'Faculty' or user == answer.user:
 					answer.question.number_of_answers-=1
 					answer.question.save()
 					question_id = answer.question.id;
@@ -58,7 +60,7 @@ def delete_post(request,type="",course_id=None,post_id=None):
 		else:
 			if Comment.objects.filter(id=post_id).exists():
 				comment=Comment.objects.get(id=post_id)
-				if user == comment.user:
+				if user.role == 'Faculty' or user == comment.user:
 					comment.answer.number_of_comments-=1
 					comment.answer.save()
 					question_id = comment.answer.question.id;
@@ -72,6 +74,7 @@ def delete_post(request,type="",course_id=None,post_id=None):
 @login_required
 def post(request,course_id=None,question_id=None):
 	user = getProfile(request)
+
 	if authorize(user, course_id):
 		if request.method=='POST':
 
@@ -81,10 +84,10 @@ def post(request,course_id=None,question_id=None):
 				title = request.POST['title']
 				Question = request.POST['Question']
 				Question=Question.replace('\n','<br>')
-				ForumQuestion(title=title, question=Question, user=getProfile(request), 
+				ForumQuestion(title=title, question=Question, user=user, 
 					number_of_answers=0, course=Course.objects.get(id=course_id), 
 					anonymous=anonymous).save()
-				make_notification(course_id)
+				make_notification(course_id,user)
 				return HttpResponseRedirect('/forum/'+course_id)
 			elif type=='Answer':
 				answer = request.POST['post'].replace('\n','<br>')
@@ -117,7 +120,7 @@ def post(request,course_id=None,question_id=None):
 				else:
 					new_assignment.save()
 
-				return HttpResponseRedirect('/forum/'+course_id)
+				return HttpResponseRedirect('/forum/'+course_id+'/#assignment')
 
 		
 

@@ -13,7 +13,8 @@ import uuid
 def home(request):
 	user=getProfile(request)
 	if user:
-		return render(request, 'basic/user_homepage.html',{'User':user})
+		notifications = get_notifications(user)
+		return render(request, 'basic/user_homepage.html',{'User':user,'Notifications':notifications})
 	return render(request, 'basic/homepage.html',{'type':"First"}) #type registration type
 
 def user_login(request):
@@ -149,13 +150,13 @@ def user_profile(request, username=None):
 # Since we know the user is logged in, we can now just log them out.
 # Take the user back to the homepage.
 	user=getProfile_user(request,username)
-
+	notifications = get_notifications(getProfile(request))
 	if request.method == 'POST':
 		try:
 			type = request.POST['type']		
 			if type == "edit":
 				return render(request,'basic/profile.html',{'button':'Save',
-					'UserReq':user, 'User':getProfile(request),'type':'save'})
+					'UserReq':user, 'User':getProfile(request),'type':'save', 'Notifications':notifications})
 			
 			lname = request.POST['lname']
 			email = request.POST['email']
@@ -168,5 +169,5 @@ def user_profile(request, username=None):
 		except: return HttpResponseRedirect('/')
 
 	return render(request,'basic/profile.html',{'property':True, 'button':'Edit',
-				 'UserReq':user, 'User':getProfile(request),'type':'edit'})
+				 'UserReq':user, 'User':getProfile(request),'type':'edit', 'Notifications':notifications})
 

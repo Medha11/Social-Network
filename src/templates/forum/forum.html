@@ -137,8 +137,8 @@
 <!-- Tabs -->
 
 <ul id="myTab" class="nav nav-tabs" role="tablist">
-      <li role="presentation" class="active"><a href="#forum" id="forum-tab" role="tab" data-toggle="tab" aria-controls="forum" aria-expanded="true">Forum <span class="badge"></span> </a></li>
-      <li role="presentation"><a href="#assignment" role="tab" id="assignment-tab" data-toggle="tab" aria-controls="assignment">Assignments
+      <li id="forum-li" role="presentation" class="active"><a href="#forum" id="forum-tab" role="tab" data-toggle="tab" aria-controls="forum" aria-expanded="true">Forum <span class="badge"></span> </a></li>
+      <li id="assignment-li" role="presentation"><a href="#assignment" role="tab" id="assignment-tab" data-toggle="tab" aria-controls="assignment">Assignments
 
         
 
@@ -291,7 +291,24 @@
     We can use the same modal for posting both answers and comments
 -->
 
+<script type="text/javascript">
+    $(function() {
+      // Javascript to open assignment tab
+      var url = document.location.toString();
+      if (url.match('#assignment')) {
+        $('li[id="forum-li"]').attr('class',' ') ;
+        $('li[id="assignment-li"]').attr('class','active') ;
+        $('div[id="forum"]').attr('class','tab-pane fade') ;
 
+        $('div[id="assignment"]').attr('class','tab-pane fade in active') ;
+      }
+
+      // Change hash for page-reload
+      $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+        window.location.hash = e.target.hash;
+      });
+    });
+</script>
 
 <script>
 
