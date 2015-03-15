@@ -90,7 +90,9 @@
                   <ul class="dropdown-menu" role="menu" style="width:300px">
                     {% for notification in Notifications %}
                     <li class="divider"></li>
-                    <li ><a href="{{ notification.link }}"> {{ notification.notification|safe }}</a></li>
+                    <li ><a href="{{ notification.link }}"> {{ notification.notification|safe }} 
+                          
+                      </a></li>
                     {% endfor %}
 
                   </ul>

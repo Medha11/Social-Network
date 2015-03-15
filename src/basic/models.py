@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
-
 class UserProfile(models.Model):
 	# This line is required. Links UserProfile to a User model instance.
 	user = models.OneToOneField(User)
@@ -14,6 +13,9 @@ class UserProfile(models.Model):
 	notifications = models.ManyToManyField('Notification', through='SetNotification', 
 						through_fields=('user', 'notification'))
 	role = models.CharField(max_length=20, default="Student")
+
+	questions_followed =  models.ManyToManyField('forum.ForumQuestion', through='forum.Follows_Question',
+								 through_fields=('student', 'question'))
 
 	def __unicode__(self):
 		return self.user.username

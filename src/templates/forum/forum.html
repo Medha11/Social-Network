@@ -179,14 +179,24 @@
               {% if question.user.user == user or User.role == "Faculty" %} <!-- Checking if question posted by current user -->
 
               <a data-url="{% url 'delete_post' %}q/{{ id }}/{{ question.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:10px; bottom:10px"> <span>&times;</span></a> <!-- Delete button -->
+              
 
               {% endif %}
 
+              <!-- AJAX follow button -->
+              
+              {% if User in question.followers.all %}
+                <button title="Unfollow" class="close ajax"  type="button" data-id="{{ question.id }}" id="follow"
+                style="float:left; position:relative; bottom:20px; left:10px; font-size: 36px;" > 
+                <span class="follow_{{ question.id }}">-</span></button> 
+              {% else %}
+                <button title="Follow" class="close ajax"  type="button" data-id="{{ question.id }}" id="follow"
+                style="float:left; position:relative; bottom:20px; left:10px; font-size: 36px;" > 
+                <span class="follow_{{ question.id }}">+</span></button> 
+              {% endif %}
               <h2>  &nbsp;  {{ question.title }} </h2> 
               
-            </div>
-
-          
+            </div>          
         
              
             <div id="collapse{{ question.id }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
@@ -295,7 +305,7 @@
     $(function() {
       // Javascript to open assignment tab
       var url = document.location.toString();
-      if (url.match('#assignment')) {
+      if (url.match('#assignment_tab')) {
         $('li[id="forum-li"]').attr('class',' ') ;
         $('li[id="assignment-li"]').attr('class','active') ;
         $('div[id="forum"]').attr('class','tab-pane fade') ;
@@ -303,14 +313,70 @@
         $('div[id="assignment"]').attr('class','tab-pane fade in active') ;
       }
 
-      // Change hash for page-reload
-      $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
-        window.location.hash = e.target.hash;
-      });
     });
+
 </script>
 
 <script>
+
+$('.ajax').click(function(){
+    
+    var button = $(this);
+    var qid = $(this).attr("data-id");
+    $.get('/ajax/follow/', {question_id: qid},
+    function(json){
+        button.attr('title',json.title);
+        $('.follow_'+qid).text(json.text);
+    });
+});
+
+/*
+$('.ajasax').on('click', function(event){
+     
+     button = $(event.target); // Button that triggered the event
+     if(button.attr('title')=='Follow'){
+       var id=button.data('ttt');
+       
+     
+
+          $.ajax({
+          url : "follow/", // the endpoint
+          type : "POST", // http method
+          dataType: "json",
+          data : { id : id , csrfmiddlewaretoken:'{{csrf_token}}'}, // data sent with the post request
+
+          // handle a successful response
+          success : function(json) {
+            button.attr('title','Unfollow');
+            $('.follow_'+id).text('-');
+          }
+
+      });
+    }
+    else{
+      {
+       var id=button.data('ttt');
+          $.ajax({
+          url : "follow/", // the endpoint
+          type : "POST", // http method
+          dataType: "json",
+          data : { id : id , csrfmiddlewaretoken:'{{csrf_token}}'}, // data sent with the post request
+
+          // handle a successful response
+          success : function(json) {
+            button.attr('title','Follow');
+            $('.follow_'+id).text('+');
+          }
+
+      });
+    }
+    }
+
+    
+}); */
+
+
+
 
 $('#delete').on('show.bs.modal', function (e) {
   var button = $(e.relatedTarget); // Button that triggered the modal

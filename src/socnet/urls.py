@@ -17,6 +17,7 @@ urlpatterns = patterns('',
 	url(r'^profile/$', views.user_profile, name='profile'),
 	url(r'^profile/(?P<username>\w+)/$', views.user_profile, name='profiles'),
 	url(r'^forum/', include('forum.urls'), name='forum'),
+	url(r'^ajax/', include('ajax.urls'), name='ajax'),
 )
 
 if settings.DEBUG:

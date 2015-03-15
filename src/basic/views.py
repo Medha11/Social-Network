@@ -149,7 +149,7 @@ def register(request,code=None):
 def user_profile(request, username=None):
 # Since we know the user is logged in, we can now just log them out.
 # Take the user back to the homepage.
-	user=getProfile_user(request,username)
+	user=getProfile(request,username)
 	notifications = get_notifications(getProfile(request))
 	if request.method == 'POST':
 		try:

@@ -16,27 +16,34 @@ from socnet import settings
 #####                                                                                 ######
 ############################################################################################
 
-def getProfile_user(request,username):
-	if username == None:
-		return UserProfile.objects.get(user=request.user)
+def getProfile(request,username=None):
+	if username == None: #sending current user's profile
+		if request.user.is_authenticated():
+			return UserProfile.objects.get(user=request.user)
 	elif User.objects.filter(username=username).exists():
 		return UserProfile.objects.get(user=User.objects.get(username=username))
 	return None
 
-def getProfile(request):	
-	if request.user.is_authenticated():
-		return UserProfile.objects.get(user=request.user)
-	return None
-
-def make_notification(course_id,user):
+def make_notification(course_id,user, question=None): #TODO Reuse code !!!!!!!!!!
 	course = Course.objects.get(id=course_id)
-	students = course.students.all()
-	link = '/forum/' + course_id
-	object_id = course.id
-	new_notification=Notification(type='Question',user_name = user.user.first_name, link=link, object_id=object_id)
-	new_notification.save()
-	for student in students:
-		SetNotification(notification=new_notification,user=student,link=link).save()
+	if question: # creating notifications for answers
+
+		students = question.followers.all()
+		link = '/forum/' + course_id + '/' + str(question.id)
+		object_id = question.id
+		new_notification=Notification(type='Answer',user_name = user.user.first_name, link=link, object_id=object_id)
+		new_notification.save()
+		for student in students:
+			SetNotification(notification=new_notification,user=student,link=link).save()
+
+	else:
+		students = course.students.all()
+		link = '/forum/' + course_id
+		object_id = course.id
+		new_notification=Notification(type='Question',user_name = user.user.first_name, link=link, object_id=object_id)
+		new_notification.save()
+		for student in students:
+			SetNotification(notification=new_notification,user=student,link=link).save()
 
 
 def get_notifications(user): #function for consolidated notifications
@@ -44,36 +51,79 @@ def get_notifications(user): #function for consolidated notifications
 	if user.notifications.filter(type='Question').exists():
 		questions = user.notifications.filter(type='Question')
 		for course in user.courses.all():
-
 			course_questions = questions.filter(object_id=course.id)
-			length = len(course_questions)
-			names = course_questions.values("user_name").distinct()
-			unique_length = len(names)
-			
-			notification = None
-			if unique_length == 1:
-				notification = '<strong>' + names[0]['user_name'] +'</strong>'
-				if length == 1:
-					notification += ' asked a question in the ' 
-				else:
-					notification += ' asked questions in the '
-				notification+= '<strong>' + course.name + '</strong> forum'
-			elif unique_length == 2:
-				user1 = names[0]['user_name']
-				user2 =	names[1]['user_name']
-				
-				notification = '<strong>'+user1+'</strong>' + ' and ' 
-				notification+= '<strong>'+user2+'</strong>'
-				notification+= ' asked questions in the ' + '<strong>'+course.name + '</strong> forum'
+			if course_questions:
+				length = len(course_questions)
+				names = course_questions.values("user_name").distinct()
+				unique_length = len(names)
+				notification = frame_question_notification(unique_length,length,names,course)
+				print notification
+				if notification:
+					list.append(ConsolidatedNotifications(notification,course_questions[0].link))
 
-			elif unique_length > 2:
-				user1 = names[0]['user_name']
-				notification = '<strong>' + user1+'</strong>' + ' and <strong>' + str(unique_length-1) 
-				notification+= ' others</strong>  asked questions in the ' + '<strong>'+course.name + '</strong> forum'
-			if notification:
-				list.append(ConsolidatedNotifications(notification,course_questions[0].link))
+	if user.notifications.filter(type='Answer').exists():
+		answers = user.notifications.filter(type='Answer')
+		for question in user.questions_followed.all():
+			question_answers = answers.filter(object_id=question.id)
+			if question_answers:
+				names = question_answers.values("user_name").distinct()
+				title = question.title
+				if len(title)>15:
+					title = title[:14]+'...'
+				title = '<span style="font-size:13px;font-style: italic;">"'+title+'"</span>'
+				unique_length = len(names)
+				notification = frame_answer_notification(unique_length,title,names,question.course)
+				print notification
+				if notification:
+					list.append(ConsolidatedNotifications(notification,question_answers[0].link))
+			
 	return list
 
+def frame_question_notification(unique_length, length, names,course): #framing notifications
+	notification = None
+	if unique_length == 1:
+		notification = '<strong>' + names[0]['user_name'] +'</strong>'
+		if length == 1:
+			notification += ' asked a question in the ' 
+		else:
+			notification += ' asked questions in the '
+		notification+= '<strong>' + course.name + '</strong> forum'
+	elif unique_length == 2:
+		user1 = names[0]['user_name']
+		user2 =	names[1]['user_name']
+		
+		notification = '<strong>'+user1+'</strong>' + ' and ' 
+		notification+= '<strong>'+user2+'</strong>'
+		notification+= ' asked questions in the ' + '<strong>'+course.name + '</strong> forum'
+
+	elif unique_length > 2:
+		user1 = names[0]['user_name']
+		notification = '<strong>' + user1+'</strong>' + ' and <strong>' + str(unique_length-1) 
+		notification+= ' others</strong>  asked questions in the ' + '<strong>'
+		notification+= course.name + '</strong> forum'
+	
+	return notification
+
+def frame_answer_notification(unique_length, question, names,course):
+	notification = None
+	if unique_length == 1:
+		notification = '<strong>' + names[0]['user_name'] +'</strong> answered the question ' + question 
+		notification+= ' in the <strong>' + course.name + '</strong> forum'
+	elif unique_length == 2:
+		user1 = names[0]['user_name']
+		user2 =	names[1]['user_name']
+		
+		notification = '<strong>'+user1+'</strong>' + ' and ' 
+		notification+= '<strong>'+user2+'</strong>'
+		notification+= ' answered the question '+question+' in the ' + '<strong>'+course.name + '</strong> forum'
+
+	elif unique_length > 2:
+		user1 = names[0]['user_name']
+		notification = '<strong>' + user1+'</strong>' + ' and <strong>' + str(unique_length-1) 
+		notification+= ' others</strong>  answered the question'+question+' in the ' + '<strong>'
+		notification+= course.name + '</strong> forum'
+	
+	return notification
 
 	
 class ConsolidatedNotifications: #class for returning consolidated notifications
@@ -82,9 +132,10 @@ class ConsolidatedNotifications: #class for returning consolidated notifications
 		self.notification = notification
 		self.link = link 
 
-def update_notifications(user, id):  #functions deletes visited notifications
-	print user.id
+def update_notifications(user, id,question_id=None):  #functions deletes visited notifications
 	link = '/forum/'+id
+	if question_id:
+		link+= '/'+question_id
 	SetNotification.objects.filter(user=user,link=link).delete()
 	return get_notifications(user)
 

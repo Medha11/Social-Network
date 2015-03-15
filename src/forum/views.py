@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 
-
 from .models import *
 from extra.utilities import *
 
@@ -11,16 +10,16 @@ from extra.utilities import *
 def forum(request, course_id, question_id=None):
 
 	user=getProfile(request)
-	notifications = get_notifications(user)
-	if authorize(user,course_id): #Checking if course exists and user is part of it
-		if question_id: #Checking if display answer page
+	if authorize(user,course_id): # Checking if course exists and user is part of it
+		if question_id: # Checking if display answer page
 			if ForumQuestion.objects.filter(id=question_id).exists():  #Checking if question exists
+				notifications = update_notifications(user, course_id,question_id)
 				question = ForumQuestion.objects.get(id=question_id)
 				answers = ForumAnswer.objects.filter(question = question)
 				new_answers = []
 				for answer in answers:
 					new_answers.append(Answer(answer))
-			return render(request,'forum/answers.html',{'question':question, 'answers':new_answers, 
+				return render(request,'forum/answers.html',{'question':question, 'answers':new_answers, 
 						'User':user, 'course_id':course_id, 'Notifications':notifications})
 
 		else:
@@ -84,10 +83,12 @@ def post(request,course_id=None,question_id=None):
 				title = request.POST['title']
 				Question = request.POST['Question']
 				Question=Question.replace('\n','<br>')
-				ForumQuestion(title=title, question=Question, user=user, 
+				question=ForumQuestion(title=title, question=Question, user=user, 
 					number_of_answers=0, course=Course.objects.get(id=course_id), 
-					anonymous=anonymous).save()
+					anonymous=anonymous)
+				question.save()
 				make_notification(course_id,user)
+				Follows_Question(question=question,student=user).save()
 				return HttpResponseRedirect('/forum/'+course_id)
 			elif type=='Answer':
 				answer = request.POST['post'].replace('\n','<br>')
@@ -96,6 +97,7 @@ def post(request,course_id=None,question_id=None):
 					cur_question.number_of_answers+=1
 					cur_question.save()					
 					ForumAnswer(answer=answer, user=user, question = cur_question, anonymous=anonymous).save()
+					make_notification(course_id,user, cur_question)
 					return HttpResponseRedirect('/forum/'+course_id+'/'+question_id)
 			elif type=='Comment':
 				comment = request.POST['post'].replace('\n','<br>')
@@ -120,9 +122,11 @@ def post(request,course_id=None,question_id=None):
 				else:
 					new_assignment.save()
 
-				return HttpResponseRedirect('/forum/'+course_id+'/#assignment')
+				return HttpResponseRedirect('/forum/'+course_id+'/#assignment_tab')
 
 		
 
 	return HttpResponseRedirect('/')
+
+
 
