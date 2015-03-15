@@ -1,14 +1,10 @@
 TODO
-djc
--> Follow button for questions and proper notifications on new answers
 -> Upvotes and downvotes for answers
 -> Sorting answers according to votes, date
 -> Badges for questions not viewed
 
 -> Upload assignment solutions
 -> Assignment Overview for professor
-
--> Dynamic notifications
 
 -> Proper profiles
 -> Course assigning interface for adding professors and students to course(optional)
@@ -23,6 +19,8 @@ DONE
 -> File name display for uploads
 -> Deadline countdown
 -> Proper date time conversions
+-> Follow button for questions and proper notifications on new answers
+-> Dynamic notifications
 
 
 Instructions
