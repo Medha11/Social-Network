@@ -15,7 +15,7 @@ def forum(request, course_id, question_id=None):
 			if ForumQuestion.objects.filter(id=question_id).exists():  #Checking if question exists
 				notifications = update_notifications(user, course_id,question_id)
 				question = ForumQuestion.objects.get(id=question_id)
-				answers = ForumAnswer.objects.filter(question = question)
+				answers = ForumAnswer.objects.filter(question = question).order_by('-date')
 				new_answers = []
 				for answer in answers:
 					new_answers.append(Answer(answer))
@@ -25,7 +25,7 @@ def forum(request, course_id, question_id=None):
 		else:
 			notifications = update_notifications(user, course_id)
 			course = Course.objects.get(id=course_id)
-			questions = ForumQuestion.objects.filter(course = course)
+			questions = ForumQuestion.objects.filter(course = course).order_by('-date')
 			assignments = Assignment.objects.filter(course = course)
 			return render(request,'forum/forum.html',{'questions':questions,'User':user,'id':course_id, 
 														'assignments':assignments,'Notifications':notifications})

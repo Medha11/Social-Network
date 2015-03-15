@@ -23,7 +23,6 @@ def until(value):
 		return str(difference.days)+' days'
 	else:
 		seconds = int(difference.total_seconds())
-		print seconds
 		hours = int(seconds/3600)
 		minutes = int(seconds/60)
 		if hours>0:

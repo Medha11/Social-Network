@@ -57,7 +57,6 @@ def get_notifications(user): #function for consolidated notifications
 				names = course_questions.values("user_name").distinct()
 				unique_length = len(names)
 				notification = frame_question_notification(unique_length,length,names,course)
-				print notification
 				if notification:
 					list.append(ConsolidatedNotifications(notification,course_questions[0].link))
 
@@ -73,7 +72,6 @@ def get_notifications(user): #function for consolidated notifications
 				title = '<span style="font-size:13px;font-style: italic;">"'+title+'"</span>'
 				unique_length = len(names)
 				notification = frame_answer_notification(unique_length,title,names,question.course)
-				print notification
 				if notification:
 					list.append(ConsolidatedNotifications(notification,question_answers[0].link))
 			
@@ -175,14 +173,14 @@ class Answer:
 	def __init__(self, answer):
 		from forum.models import Comment
 		self.answer = answer
-		self.comments = Comment.objects.filter(answer=answer)
+		self.comments = Comment.objects.filter(answer=answer).order_by('-date')
 
 def upload_to_function(instance, filename): #function for dynamic file handling for assignments
 	import os
 	return os.path.join('assignment',instance.course.course_id,instance.title,filename)
 
 
-def create_assignment(files,id,assignment):
+def create_assignment(files,id,assignment): #stores in temp folder, zips, saves and removes the temp files
 	import os
 	import zipfile	
 	from django.core.files import File
