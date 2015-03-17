@@ -6,14 +6,14 @@ from django.contrib.contenttypes.models import ContentType
 class UserProfile(models.Model):
 	# This line is required. Links UserProfile to a User model instance.
 	user = models.OneToOneField(User)
-	reg = models.CharField(max_length=12, unique=True)
+	reg = models.CharField(max_length=12, unique=True, blank=True)
 	website = models.URLField(blank=True)
 	picture = models.ImageField(upload_to='profile_images', blank=True)
 	courses = models.ManyToManyField('Course', through='Membership', through_fields=('student', 'course'))
 	notifications = models.ManyToManyField('Notification', through='SetNotification', 
 						through_fields=('user', 'notification'))
 	role = models.CharField(max_length=20, default="Student")
-	user_interests = models.ManyToManyField('All_Interests',through='Interests', through_fields = ('student','interest'))
+	user_interests = models.ManyToManyField('AllInterest',through='Interest', through_fields = ('student','interest'))
 
 	questions_followed =  models.ManyToManyField('forum.ForumQuestion', through='forum.Follows_Question',
 								 through_fields=('student', 'question'))
@@ -39,15 +39,15 @@ class Membership(models.Model):
 	student = models.ForeignKey(UserProfile)
 
 
-class All_Interests(models.Model):
+class AllInterest(models.Model):
 	category = models.CharField(max_length=40)
-	students = models.ManyToManyField(UserProfile, through='Interests', through_fields=('interest', 'student'))
+	students = models.ManyToManyField(UserProfile, through='Interest', through_fields=('interest', 'student'))
 	def __unicode__(self):
 		return self.category
 
 
-class Interests(models.Model):
-	interest = models.ForeignKey(All_Interests)
+class Interest(models.Model):
+	interest = models.ForeignKey(AllInterest)
 	student = models.ForeignKey(UserProfile)
 
 

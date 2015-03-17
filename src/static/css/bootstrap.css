@@ -5607,7 +5607,6 @@ a.thumbnail.active,a.thumbnail:focus,a.thumbnail:hover{
 	padding:10px 15px;
 	margin-bottom:-1px;
 	background-color:#fff;
-	border:1px solid #ddd
 }
 
 .list-group-item:first-child{
@@ -6155,16 +6154,7 @@ a.list-group-item-danger.active,a.list-group-item-danger.active:focus,a.list-gro
 
 #removing border 
 
-.closee{
-	float:right;
-	font-size:21px;
-	font-weight:700;
-	line-height:1;
-	color:#000;
-	text-shadow:0 1px 0 #fff;
-	filter:alpha(opacity=20);
-	opacity:.2
-}
+
 
 .close:focus,.close:hover{
 	color:#000;

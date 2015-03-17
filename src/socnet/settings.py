@@ -77,7 +77,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql', 
         'NAME': 'socnet',
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': '',
         #'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
         #'PORT': '3306',
     }
@@ -94,7 +94,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)

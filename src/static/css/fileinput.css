@@ -16,3 +16,21 @@ input[type=file]{
   display: block;
 
 }
+
+.hear{
+  font-size:21px;
+  font-weight:700;
+  line-height:1;
+  color:#000;
+  text-shadow:0 1px 0 #fff;
+  filter:alpha(opacity=20);
+  opacity:.2
+}
+
+button.hear{
+  -webkit-appearance:none;
+  padding:0;
+  cursor:pointer;
+  background:0 0;
+  border:0
+}

@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 import re
 import MySQLdb
 
-db = MySQLdb.connect("localhost","root","root","socnet" )
+db = MySQLdb.connect("localhost","root","","socnet" )
 
 cursor = db.cursor()
 
@@ -14,7 +14,7 @@ cursor = db.cursor()
 
 
 cj = CookieJar()
-proxy = urllib2.ProxyHandler({"http":"http://edcguest:edcguest@127.0.0.1:45001"})
+proxy = urllib2.ProxyHandler({"http":"http://edcguest:edcguest@172.31.100.30:3128"})
 opener = urllib2.build_opener(proxy,urllib2.HTTPCookieProcessor(cj))
 opener2 = urllib2.build_opener(proxy,urllib2.HTTPCookieProcessor(cj))
 opener.addheaders = [('User-agent', 'Mozilla/5.0')]

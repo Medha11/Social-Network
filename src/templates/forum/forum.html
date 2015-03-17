@@ -355,13 +355,11 @@
                 
                 {{ assignment.description|safe }}
                 <br> </br>
-                {% if assignment.file %}
-                  <a class="btn btn-primary" href="{% url 'home' %}media/{{ assignment.file }}"> Download Assignment </a>
-                {%  endif %}
-
-                <br> <br>
                   <li class="list-group-item" style="background-color:transparent">
                <!--       <a href="{% url 'forum' %}{{ id }}/{{ question.id }}" class="btn btn-default btn-lg" >View Answers <span class="badge">{{ question.number_of_answers  }}</span></a> -->
+               {% if assignment.file %}
+                  <a class="btn btn-primary" href="{% url 'home' %}media/{{ assignment.file }}"> Download Assignment </a>
+                {%  endif %}
                       <span class="pull-right" >  
                 <!--      {% if question.anonymous %}
                         <strong> Asked By: </strong> Anonymous <br>
@@ -415,13 +413,12 @@
                 
                 {{ file.description|safe }}
                 <br> </br>
-                {% if file.file %}
-                  <a class="btn btn-primary" href="{% url 'home' %}media/{{ file.file }}"> Download File </a>
-                {%  endif %}
-
-                <br> <br>
+                
                   <li class="list-group-item" style="background-color:transparent">
                <!--       <a href="{% url 'forum' %}{{ id }}/{{ question.id }}" class="btn btn-default btn-lg" >View Answers <span class="badge">{{ question.number_of_answers  }}</span></a> -->
+               {% if file.file %}
+                  <a class="btn btn-primary" href="{% url 'home' %}media/{{ file.file }}"> Download File </a>
+                {%  endif %}
                       <span class="pull-right" >  
                 <!--      {% if question.anonymous %}
                         <strong> Asked By: </strong> Anonymous <br>

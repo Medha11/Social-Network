@@ -131,8 +131,7 @@
       <h1> Answers: </h1>
       {% for Answer in answers %}
         <div class="panel panel-default" >
-          
-          
+
           <div class="panel-body">   
 
             {% if Answer.answer.user.user == user or User.role == "Faculty"%}
@@ -145,12 +144,13 @@
             <ul class="list-group">
               <li class="list-group-item">  
                 
-                  <button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#post_modal" data-type="Comment" data-ans="{{ Answer.answer.id }}">Comment</button>
+                  <a type="button" data-toggle="modal" data-target="#post_modal" data-type="Comment" data-ans="{{ Answer.answer.id }}" style="cursor:pointer; position:relative; top:5px; color:#656363">Comment</a>
               
                 {% if Answer.comments %}
+                  &nbsp;
+                  <button class="hear glyphicon glyphicon-comment" data-toggle="collapse" href="#collapse{{ Answer.answer.id }}" style="position:relative; top:12px; left:2px;" aria-expanded="false" aria-controls="collapse{{ Answer.answer.id }}">  </button>
 
-                  <a class="btn btn-default btn-lg" data-toggle="collapse" href="#collapse{{ Answer.answer.id }}" aria-expanded="false" aria-controls="collapse{{ Answer.answer.id }}"> Comments  <span class="badge">{{ Answer.answer.number_of_comments }}</span></a>
-                
+                <sup style="color: #000; position:relative; bottom:10px;">{{ Answer.answer.number_of_comments }}</sup>
                 {% endif %}
              
                   <span class="pull-right" >  
@@ -175,34 +175,27 @@
                   <div class="container-fluid">
                     
                     {% for comment in Answer.comments %}
-                      <div class="panel-body active" >
                         {% if comment.user.user == user or User.role == "Faculty" %}
                           <a data-url="{% url 'delete_post' %}c/{{ course_id }}/{{ comment.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:9px; bottom:5px"> <span>&times;</span></a> <!-- Delete button -->
                         {% endif %}
 
                         {{ comment.comment|safe }}
 
+                        {% if comment.anonymous %}
+                          <strong> --- </strong> Anonymous 
+                        {% else %}
+                          <strong> --- </strong> <a href="{% url 'profile' %}{{ comment.user.user.username }}"> {{ comment.user.user.get_full_name }} </a> 
+                        {% endif %}
+                            ({{ comment.date|age }})
+
+                      <div class="panel-footer" style="background-color:transparent"> 
                       </div>
-                      <div class="panel-footer" style="background-color:transparent">                
-                          <span class="pull-right" >  
-                            {% if comment.anonymous %}
-                             <strong> Posted By: </strong> Anonymous <br>
-                            {% else %}
-                            <strong> Posted By: </strong> <a href="{% url 'profile' %}{{ comment.user.user.username }}"> {{ comment.user.user.get_full_name }} </a> <br>
-                            {% endif %}
-                            <strong> Posted: </strong> {{ comment.date|age }}
-                          </span>
-                      </div>
-                      <br>
                       <br>
                     {% endfor %}
 
                   </div>
                 </div>
               </div>
-              &nbsp; &nbsp;<a class="btn btn-default btn-lg" data-toggle="collapse"  href="#collapse{{ Answer.answer.id }}" aria-expanded="false" aria-controls="collapseOne"> Hide Comments </a>
-              <br>
-              <br>
             </div>
 
         {% endif %}      
