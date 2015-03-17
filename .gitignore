@@ -1,4 +1,5 @@
 src/media/
 *.pyc
 *~
-src/*/migrations/
+src/*/migrations
+*.json

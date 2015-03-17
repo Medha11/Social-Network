@@ -123,7 +123,8 @@ def register(request,code=None):
 					context['not_unique']=True
 					return render(request,'basic/register.html', context)
 
-				user=User.objects.create_user(email=email,first_name=fname, last_name=lname, username=username, password=password)
+				user=User.objects.create_user(email=email,first_name=fname, last_name=lname, 
+					username=username, password=password)
 				UserProfile(user=user,reg=str(reg)).save()
 				context['type']= 'success'
 				context['message']='Registration Successful. You can now login!!!!'
