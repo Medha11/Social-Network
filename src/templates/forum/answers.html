@@ -1,6 +1,7 @@
 
 {% extends 'second_base.html' %}
 {% load time_short %}
+{% load staticfiles %}
 {% block second_content %}
 
 <!-- Post answer or comments -->
@@ -83,9 +84,22 @@
 
      <ul class="list-group">
         <div class="panel-header">
-          {% if question.user.user == user %}
+          {% if question.user.user == user or User.role == "Faculty" %}
             <a data-url="{% url 'delete_post' %}q/{{ course_id }}/{{ question.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:10px; bottom:10px"> <span class="glyphicon glyphicon-remove"></span></a> <!-- Delete button -->
           {% endif %}
+
+           <!-- AJAX follow button -->
+
+              {% if User in question.followers.all %}
+                <button title="Unfollow" class="close ajax"  type="button" data-id="{{ question.id }}" id="follow"
+                 style="position:relative; right:10px; bottom:10px"> 
+                <span class="glyphicon glyphicon-star" id="follow_{{ question.id }}"></span></button> 
+              {% else %}
+                <button title="Follow" class="close ajax"  type="button" data-id="{{ question.id }}" id="follow"
+                style="position:relative; right:10px; bottom:10px"> 
+                <span class="glyphicon glyphicon-star-empty" id="follow_{{ question.id }}"></span></button> 
+              {% endif %}
+
              <h2> &nbsp; {{ question.title }} </h2>
           
         </div>
@@ -121,7 +135,7 @@
           
           <div class="panel-body">   
 
-            {% if Answer.answer.user.user == user %}
+            {% if Answer.answer.user.user == user or User.role == "Faculty"%}
               <a data-url="{% url 'delete_post' %}a/{{ course_id }}/{{ Answer.answer.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:4px; bottom:10px"> <span class="glyphicon glyphicon-remove"></span></a> <!-- Delete button -->
 
             {% endif %}
@@ -162,7 +176,7 @@
                     
                     {% for comment in Answer.comments %}
                       <div class="panel-body active" >
-                        {% if comment.user.user == user %}
+                        {% if comment.user.user == user or User.role == "Faculty" %}
                           <a data-url="{% url 'delete_post' %}c/{{ course_id }}/{{ comment.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:9px; bottom:5px"> <span>&times;</span></a> <!-- Delete button -->
                         {% endif %}
 
@@ -215,7 +229,6 @@
 -->
 
 
-
   <script>
 
     $('#post_modal').on('show.bs.modal', function (e) {
@@ -238,6 +251,20 @@
       var modal = $(this);
       modal.find('.modal-body a[id="confirm"]').attr('href', url);
     });
+
+
+// follow button with ajax
+  $('.ajax').click(function(){
+      var button = $(this);
+      var qid = $(this).attr("data-id");
+      $.get('/ajax/follow/', {question_id: qid},
+      function(json){
+          button.attr('title',json.title);
+          document.getElementById("follow_"+qid).className =
+          document.getElementById("follow_"+qid).className.replace(json.before, json.after );
+      });
+  });
+
 
   </script>
 

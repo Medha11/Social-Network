@@ -280,11 +280,11 @@
               {% if User in question.followers.all %}
                 <button title="Unfollow" class="close ajax"  type="button" data-id="{{ question.id }}" id="follow"
                  style="position:relative; right:10px; bottom:10px"> 
-                <span class="glyphicon glyphicon-minus" id="follow_{{ question.id }}"></span></button> 
+                <span class="glyphicon glyphicon-star" id="follow_{{ question.id }}"></span></button> 
               {% else %}
                 <button title="Follow" class="close ajax"  type="button" data-id="{{ question.id }}" id="follow"
                 style="position:relative; right:10px; bottom:10px"> 
-                <span class="glyphicon glyphicon-plus" id="follow_{{ question.id }}"></span></button> 
+                <span class="glyphicon glyphicon-star-empty" id="follow_{{ question.id }}"></span></button> 
               {% endif %}
 
               
@@ -581,7 +581,6 @@ $("#assign_file, #upload_file").on("change", function(){
 
 <!-- Datepicker javascript -->
 
-<script src="{% static "javascript/jquery.js" %}"></script>
 <script src="{% static "javascript/jquery-ui.js" %}"></script>
 
 <script> 
