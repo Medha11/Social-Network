@@ -40,7 +40,7 @@ class Comment(models.Model):
 
 class Assignment(models.Model):
 	title = models.CharField(max_length=100, default=None)
-	description = models.TextField(blank=True)
+	description = models.TextField(default='No Description')
 	date = models.DateTimeField(auto_now_add=True)
 	course = models.ForeignKey('basic.Course', default=None)
 	deadline = models.DateTimeField()
@@ -55,7 +55,7 @@ class Follows_Question(models.Model):
 
 class ForumFile(models.Model):
 	title = models.CharField(max_length=100, default=None)
-	description=models.TextField()
+	description=models.TextField(blank=True,default='No Description')
 	user = models.ForeignKey('basic.UserProfile',related_name='uploader')
 	date = models.DateTimeField(auto_now_add=True)
 	course = models.ForeignKey('basic.Course', default=None)

@@ -101,6 +101,7 @@ def post(request,course_id=None,question_id=None):
 					ForumAnswer(answer=answer, user=user, question = cur_question, anonymous=anonymous).save()
 					make_notification(course_id,user, cur_question)
 					return HttpResponseRedirect('/forum/'+course_id+'/'+question_id)
+
 			elif type=='Comment':
 				comment = request.POST['post'].replace('\n','<br>')
 				ans_id = request.POST['answer']
@@ -116,6 +117,8 @@ def post(request,course_id=None,question_id=None):
 				description = request.POST['description'].replace('\n','<br>')
 				deadline = request.POST['date']
 				date = deadline[6:]+'-'+deadline[:2]+'-'+deadline[3:5]
+				if not description:
+					description = 'No Description'
 				new_assignment = Assignment(title=title, description=description, 
 					course=Course.objects.get(id=course_id), deadline=date)
 				
@@ -129,6 +132,8 @@ def post(request,course_id=None,question_id=None):
 			elif type=='File':
 				title = request.POST['title']
 				description = request.POST['description'].replace('\n','<br>')
+				if not description:
+					description = 'No Description'
 				new_upload = ForumFile(title=title, description=description, 
 					course=Course.objects.get(id=course_id),user = user)
 				
