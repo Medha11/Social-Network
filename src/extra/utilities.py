@@ -25,11 +25,10 @@ def getProfile(request,username=None):
 	return None
 
 def getRSS(user):	
-	result = []
-	for interest in user.user_interests.all():
-		feeds = RssStore.objects.filter(Category=interest)
-		result.append(feeds)
-	return result	
+	feeds = []
+	for topic in user.user_interests.all():
+		feeds += RSSStore.objects.filter(Category=topic)
+	return feeds	
 
 def make_notification(course_id,user, question=None): #TODO Reuse code !!!!!!!!!!
 	course = Course.objects.get(id=course_id)
@@ -38,7 +37,8 @@ def make_notification(course_id,user, question=None): #TODO Reuse code !!!!!!!!!
 		students = question.followers.all()
 		link = '/forum/' + course_id + '/' + str(question.id)
 		object_id = question.id
-		new_notification=Notification(type='Answer',user_name = user.user.first_name, link=link, object_id=object_id)
+		new_notification=Notification(type='Answer',user_name = user.user.first_name, link=link, 
+							object_id=object_id)
 		new_notification.save()
 		for student in students:
 			SetNotification(notification=new_notification,user=student,link=link).save()

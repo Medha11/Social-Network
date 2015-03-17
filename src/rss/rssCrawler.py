@@ -14,7 +14,7 @@ cursor = db.cursor()
 
 
 cj = CookieJar()
-proxy = urllib2.ProxyHandler({"http":"http://edcguest:edcguest@172.31.100.30:3128"})
+proxy = urllib2.ProxyHandler({"http":"http://edcguest:edcguest@172.31.103.29:3128"})
 opener = urllib2.build_opener(proxy,urllib2.HTTPCookieProcessor(cj))
 opener2 = urllib2.build_opener(proxy,urllib2.HTTPCookieProcessor(cj))
 opener.addheaders = [('User-agent', 'Mozilla/5.0')]

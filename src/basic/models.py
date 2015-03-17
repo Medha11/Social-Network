@@ -13,7 +13,7 @@ class UserProfile(models.Model):
 	notifications = models.ManyToManyField('Notification', through='SetNotification', 
 						through_fields=('user', 'notification'))
 	role = models.CharField(max_length=20, default="Student")
-	user_interests = models.ManyToManyField('AllInterest',through='Interest', through_fields = ('student','interest'))
+	user_interests = models.ManyToManyField('rss.Topic',through='rss.Interest', through_fields = ('student','topic'))
 
 	questions_followed =  models.ManyToManyField('forum.ForumQuestion', through='forum.Follows_Question',
 								 through_fields=('student', 'question'))
@@ -37,19 +37,6 @@ class Course(models.Model):
 class Membership(models.Model):
 	course = models.ForeignKey(Course)
 	student = models.ForeignKey(UserProfile)
-
-
-class AllInterest(models.Model):
-	category = models.CharField(max_length=40)
-	students = models.ManyToManyField(UserProfile, through='Interest', through_fields=('interest', 'student'))
-	def __unicode__(self):
-		return self.category
-
-
-class Interest(models.Model):
-	interest = models.ForeignKey(AllInterest)
-	student = models.ForeignKey(UserProfile)
-
 
 
 class Notification(models.Model):

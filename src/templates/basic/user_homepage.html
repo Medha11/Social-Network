@@ -12,8 +12,7 @@
     </div>
 
     <div class="container-fluid">
-    {% for interest in feeds %}
-      {% for feed in interest %}
+    {% for feed in feeds %}
     
       <!-- Example row of columns -->
      
@@ -24,7 +23,7 @@
           <p><a class="btn btn-default" href="{{feed.Link }}" role="button">View details &raquo;</a></p>
         </div>
         </div>  
-      {% endfor %}  
+         
     {% endfor %}
 
       

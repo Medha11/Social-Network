@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from basic.models import *
 
 # Create your models here.
-class RssStore(models.Model):
+class RSSStore(models.Model):
 	# This line is required. Links UserProfile to a User model instance.
 	#user = models.OneToOneField(User)
 	Title = models.CharField(max_length=200)
@@ -17,3 +17,15 @@ class RssStore(models.Model):
 
 	def __unicode__(self):
 		return self.Title
+
+
+class Topic(models.Model):
+	name = models.CharField(max_length=40)
+	students = models.ManyToManyField('basic.UserProfile', through='Interest', through_fields=('topic', 'student'))
+	def __unicode__(self):
+		return self.name
+
+
+class Interest(models.Model):
+	topic = models.ForeignKey(Topic)
+	student = models.ForeignKey('basic.UserProfile')
