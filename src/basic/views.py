@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
 from .models import *
-
+from rss.models import *
 from extra.utilities import *
 import uuid
 
@@ -14,7 +14,8 @@ def home(request):
 	user=getProfile(request)
 	if user:
 		notifications = get_notifications(user)
-		return render(request, 'basic/user_homepage.html',{'User':user,'Notifications':notifications})
+		feeds = getRSS(user)
+		return render(request, 'basic/user_homepage.html',{'User':user,'Notifications':notifications,'feeds':feeds})
 	return render(request, 'basic/homepage.html',{'type':"First"}) #type registration type
 
 def user_login(request):

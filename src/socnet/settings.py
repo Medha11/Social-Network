@@ -48,6 +48,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'basic',
     'forum',
+    'rss',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -76,7 +77,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql', 
         'NAME': 'socnet',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'root',
         #'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
         #'PORT': '3306',
     }
@@ -93,7 +94,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False
+USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)

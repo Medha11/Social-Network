@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 from basic.models import *
 from socnet import settings
-
+from rss.models import *
 
 
 ############################################################################################
@@ -23,6 +23,13 @@ def getProfile(request,username=None):
 	elif User.objects.filter(username=username).exists():
 		return UserProfile.objects.get(user=User.objects.get(username=username))
 	return None
+
+def getRSS(user):	
+	result = []
+	for interest in user.user_interests.all():
+		feeds = RssStore.objects.filter(Category=interest)
+		result.append(feeds)
+	return result	
 
 def make_notification(course_id,user, question=None): #TODO Reuse code !!!!!!!!!!
 	course = Course.objects.get(id=course_id)
