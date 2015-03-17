@@ -117,13 +117,61 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" form="upload_form">Upload</button>
+        <button type="submit" class="btn btn-primary" form="upload_form">Submit</button>
       </div>
     </div>
   </div>
 </div>
 
 
+{% if User.role == "Student" %}
+
+<!-- Upload Assignment modal -->
+
+
+
+
+<div class="modal fade" id="FileUpload"  tabindex="-1" role="dialog" aria-labelledby="FileUploadLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="FileUploadLabel">Upload Files</h4>
+      </div>
+      <div class="modal-body">
+        <form id="upload_form" method="post" action="{% url 'post' %}{{ id }}/0/" // TODO
+        enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="title" class="control-label">Title:</label>
+            <input type="text" class="form-control" id="title" name="title" autofocus required>
+          </div>
+          <input type="text" class="hidden" name="type" value="File" required>
+          <div class="form-group">
+            <label for="Question" class="control-label">Description: (Optional)</label>
+            <textarea class="form-control" id="description" name="description" ></textarea>
+          </div>
+
+          <div class="row">
+            <div class="col-md-3">
+              <span class = "btn btn-primary btn-block" style="position: relative; overflow: hidden;"> Upload File(s)<input type="file" name="files" id="upload_file" multiple> </input> </span>
+            </div>
+            <div class="col-md-9" > 
+              <input type="text" class="form-control" readonly id="filename_upload" name="filename" placeholder="No files uploaded"> &nbsp; &nbsp;
+            </div>
+          </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" form="upload_form">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endif %}
 <!-- Post question modal -->
 
 <div class="modal fade" id="question"  tabindex="-1" role="dialog" aria-labelledby="questionLabel" aria-hidden="true">
@@ -222,22 +270,24 @@
              <div class="panel-header">
               {% if question.user.user == user or User.role == "Faculty" %} <!-- Checking if question posted by current user -->
 
-              <a data-url="{% url 'delete_post' %}q/{{ id }}/{{ question.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:10px; bottom:10px"> <span>&times;</span></a> <!-- Delete button -->
+              <a data-url="{% url 'delete_post' %}q/{{ id }}/{{ question.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:10px; bottom:10px"> <span class="glyphicon glyphicon-remove"></span></a> <!-- Delete button -->
               
 
               {% endif %}
 
               <!-- AJAX follow button -->
-              
+
               {% if User in question.followers.all %}
                 <button title="Unfollow" class="close ajax"  type="button" data-id="{{ question.id }}" id="follow"
-                style="float:left; position:relative; bottom:20px; left:10px; font-size: 36px;" > 
-                <span class="follow_{{ question.id }}">-</span></button> 
+                 style="position:relative; right:10px; bottom:10px"> 
+                <span class="glyphicon glyphicon-minus" id="follow_{{ question.id }}"></span></button> 
               {% else %}
                 <button title="Follow" class="close ajax"  type="button" data-id="{{ question.id }}" id="follow"
-                style="float:left; position:relative; bottom:20px; left:10px; font-size: 36px;" > 
-                <span class="follow_{{ question.id }}">+</span></button> 
+                style="position:relative; right:10px; bottom:10px"> 
+                <span class="glyphicon glyphicon-plus" id="follow_{{ question.id }}"></span></button> 
               {% endif %}
+
+              
               <h2>  &nbsp;  {{ question.title }} </h2> 
               
             </div>          
@@ -251,6 +301,8 @@
                 <br> <br>
                   <li class="list-group-item" style="background-color:transparent">
                       <a href="{% url 'forum' %}{{ id }}/{{ question.id }}" class="btn btn-default btn-lg" >View Answers <span class="badge">{{ question.number_of_answers  }}</span></a>
+              
+                      
                       <span class="pull-right" >  
                       {% if question.anonymous %}
                         <strong> Asked By: </strong> Anonymous <br>
@@ -287,6 +339,12 @@
           <ul class="list-group">
 
              <div class="panel-header">
+              {% if file.user.user == user or User.role == "Faculty" %} <!-- Checking if question posted by current user -->
+
+                <a data-url="{% url 'delete_post' %}as/{{ id }}/{{ assignment.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:10px; bottom:10px"> <span class="glyphicon glyphicon-remove"></span></a> <!-- Delete button -->
+                
+
+              {% endif %}
               <h2>  &nbsp;  {{ assignment.title }}  </h2> 
               
             </div>
@@ -344,6 +402,12 @@
           <ul class="list-group">
 
               <div class="panel-header">
+              {% if file.user.user == user or User.role == "Faculty" %} <!-- Checking if question posted by current user -->
+
+                <a data-url="{% url 'delete_post' %}f/{{ id }}/{{ file.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:10px; bottom:10px"> <span class="glyphicon glyphicon-remove"></span></a> <!-- Delete button -->
+                
+
+              {% endif %}
                 <h2>  &nbsp;  {{ file.title }}  </h2> 
               </div>
             
@@ -427,7 +491,8 @@ $('.ajax').click(function(){
     $.get('/ajax/follow/', {question_id: qid},
     function(json){
         button.attr('title',json.title);
-        $('.follow_'+qid).text(json.text);
+        document.getElementById("follow_"+qid).className =
+        document.getElementById("follow_"+qid).className.replace(json.before, json.after );
     });
 });
 

@@ -15,11 +15,11 @@ def follow(request):
 				student = getProfile(request)
 				question = ForumQuestion.objects.get(id=id)
 				if student in question.followers.all():
-					success={'title':'Follow', 'text': '+'}
+					success={'title':'Follow', 'before': 'minus', 'after':'plus'}
 					Follows_Question.objects.get(question=question,student=student).delete()
 					return HttpResponse(json.dumps(success),content_type="application/json")
 				else:
-					success={'title':'Unfollow', 'text': '-'}
+					success={'title':'Unfollow',  'before': 'plus', 'after':'minus'}
 					Follows_Question(question=question,student=student).save()
 					return HttpResponse(json.dumps(success),content_type="application/json")
 		except: None

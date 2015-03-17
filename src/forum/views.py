@@ -58,7 +58,7 @@ def delete_post(request,type="",course_id=None,post_id=None):
 					question_id = answer.question.id;
 					answer.delete()
 				return HttpResponseRedirect('/forum/'+course_id+'/'+str(question_id))
-		else:
+		elif type == 'c':
 			if Comment.objects.filter(id=post_id).exists():
 				comment=Comment.objects.get(id=post_id)
 				if user.role == 'Faculty' or user == comment.user:
@@ -67,6 +67,21 @@ def delete_post(request,type="",course_id=None,post_id=None):
 					question_id = comment.answer.question.id;
 					comment.delete()
 				return HttpResponseRedirect('/forum/'+course_id+'/'+str(question_id))
+		elif type == 'f':
+			if ForumFile.objects.filter(id=post_id).exists():
+				file=ForumFile.objects.get(id=post_id)
+				if user.role == 'Faculty' or user == file.user:
+					file.file.delete()
+					file.delete()
+				return HttpResponseRedirect('/forum/'+course_id+'/#file_tab')
+
+		elif type == 'as':
+			if Assignment.objects.filter(id=post_id).exists():
+				assignment=Assignment.objects.get(id=post_id)
+				if user.role == 'Faculty' or user == assignment.user:
+					assignment.file.delete()
+					assignment.delete()
+				return HttpResponseRedirect('/forum/'+course_id+'/#assignment_tab')
 
 	return HttpResponseRedirect('/')
 
