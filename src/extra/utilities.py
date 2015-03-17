@@ -177,10 +177,10 @@ class Answer:
 
 def upload_to_function(instance, filename): #function for dynamic file handling for assignments
 	import os
-	return os.path.join('assignment',instance.course.course_id,instance.title,filename)
+	return os.path.join('files',instance.course.course_id,filename)
 
 
-def create_assignment(files,id,assignment): #stores in temp folder, zips, saves and removes the temp files
+def create_file(files,id,object): #stores in temp folder, zips, saves and removes the temp files
 	import os
 	import zipfile	
 	from django.core.files import File
@@ -201,8 +201,8 @@ def create_assignment(files,id,assignment): #stores in temp folder, zips, saves 
 	zipf.close()
 	ZIP = os.path.join(BASE,'Python.zip')
 	zipf=open(ZIP)
-	assignment.file.save(assignment.title+'.zip',File(zipf))
-	assignment.save()
+	object.file.save(object.title+'.zip',File(zipf))
+	object.save()
 	zipf.close()
 	os.remove(ZIP)
 	os.rmdir(BASE)

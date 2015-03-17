@@ -52,4 +52,15 @@ class Assignment(models.Model):
 class Follows_Question(models.Model):
 	question = models.ForeignKey(ForumQuestion)
 	student = models.ForeignKey('basic.UserProfile')
+
+class ForumFile(models.Model):
+	title = models.CharField(max_length=100, default=None)
+	description=models.TextField()
+	user = models.ForeignKey('basic.UserProfile',related_name='uploader')
+	date = models.DateTimeField(auto_now_add=True)
+	course = models.ForeignKey('basic.Course', default=None)
+	file = models.FileField(upload_to=upload_to_function)
+
+	def __unicode__(self):
+		return self.title
 	

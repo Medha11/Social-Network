@@ -26,9 +26,11 @@ def forum(request, course_id, question_id=None):
 			notifications = update_notifications(user, course_id)
 			course = Course.objects.get(id=course_id)
 			questions = ForumQuestion.objects.filter(course = course).order_by('-date')
-			assignments = Assignment.objects.filter(course = course)
+			assignments = Assignment.objects.filter(course = course).order_by('-date')
+			files = ForumFile.objects.filter(course = course).order_by('-date')
 			return render(request,'forum/forum.html',{'questions':questions,'User':user,'id':course_id, 
-														'assignments':assignments,'Notifications':notifications})
+														'assignments':assignments,'files':files,
+														'Notifications':notifications})
 
 		
 	return HttpResponseRedirect('/')
@@ -118,11 +120,24 @@ def post(request,course_id=None,question_id=None):
 					course=Course.objects.get(id=course_id), deadline=date)
 				
 				if 'files' in request.FILES:
-					create_assignment(request.FILES.getlist('files'),course_id,new_assignment)
+					create_file(request.FILES.getlist('files'),course_id,new_assignment)
 				else:
 					new_assignment.save()
 
 				return HttpResponseRedirect('/forum/'+course_id+'/#assignment_tab')
+
+			elif type=='File':
+				title = request.POST['title']
+				description = request.POST['description'].replace('\n','<br>')
+				new_upload = ForumFile(title=title, description=description, 
+					course=Course.objects.get(id=course_id),user = user)
+				
+				if 'files' in request.FILES:
+					create_file(request.FILES.getlist('files'),course_id,new_upload)
+				else:
+					new_upload.save()
+
+				return HttpResponseRedirect('/forum/'+course_id+'/#file_tab')
 
 		
 
