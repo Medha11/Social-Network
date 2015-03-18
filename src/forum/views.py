@@ -15,12 +15,13 @@ def forum(request, course_id, question_id=None):
 			if ForumQuestion.objects.filter(id=question_id).exists():  #Checking if question exists
 				notifications = update_notifications(user, course_id,question_id)
 				question = ForumQuestion.objects.get(id=question_id)
-				answers = ForumAnswer.objects.filter(question = question).order_by('-date')
-				new_answers = []
-				for answer in answers:
-					new_answers.append(Answer(answer))
-				return render(request,'forum/answers.html',{'question':question, 'answers':new_answers, 
-						'User':user, 'course_id':course_id, 'Notifications':notifications})
+				if check_validity(question,course_id):
+					answers = ForumAnswer.objects.filter(question = question).order_by('-date')
+					new_answers = []
+					for answer in answers:
+						new_answers.append(Answer(answer))
+					return render(request,'forum/answers.html',{'question':question, 'answers':new_answers, 
+							'User':user, 'course_id':course_id, 'Notifications':notifications})
 
 		else:
 			notifications = update_notifications(user, course_id)
@@ -46,42 +47,47 @@ def delete_post(request,type="",course_id=None,post_id=None):
 		if type == 'q':
 			if ForumQuestion.objects.filter(id=post_id).exists(): #Checking if question exists
 				question=ForumQuestion.objects.get(id=post_id)
-				if user.role == 'Faculty' or user == question.user: #confirming that the post belongs to user
-					question.delete()
-				return HttpResponseRedirect('/forum/'+course_id)
+				if check_validity(question,course_id):
+					if user.role == 'Faculty' or user == question.user: #confirming that the post belongs to user
+						question.delete()
+					return HttpResponseRedirect('/forum/'+course_id)
 		elif type =='a':
 			if ForumAnswer.objects.filter(id=post_id).exists():
 				answer=ForumAnswer.objects.get(id=post_id)
-				if user.role == 'Faculty' or user == answer.user:
-					answer.question.number_of_answers-=1
-					answer.question.save()
-					question_id = answer.question.id;
-					answer.delete()
-				return HttpResponseRedirect('/forum/'+course_id+'/'+str(question_id))
+				if check_validity(answer.question,course_id):
+					if user.role == 'Faculty' or user == answer.user:
+						answer.question.number_of_answers-=1
+						answer.question.save()
+						question_id = answer.question.id;
+						answer.delete()
+					return HttpResponseRedirect('/forum/'+course_id+'/'+str(question_id))
 		elif type == 'c':
 			if Comment.objects.filter(id=post_id).exists():
 				comment=Comment.objects.get(id=post_id)
-				if user.role == 'Faculty' or user == comment.user:
-					comment.answer.number_of_comments-=1
-					comment.answer.save()
-					question_id = comment.answer.question.id;
-					comment.delete()
-				return HttpResponseRedirect('/forum/'+course_id+'/'+str(question_id))
+				if check_validity(comment.answer.question,course_id):
+					if user.role == 'Faculty' or user == comment.user:
+						comment.answer.number_of_comments-=1
+						comment.answer.save()
+						question_id = comment.answer.question.id;
+						comment.delete()
+					return HttpResponseRedirect('/forum/'+course_id+'/'+str(question_id))
 		elif type == 'f':
 			if ForumFile.objects.filter(id=post_id).exists():
 				file=ForumFile.objects.get(id=post_id)
-				if user.role == 'Faculty' or user == file.user:
-					file.file.delete()
-					file.delete()
-				return HttpResponseRedirect('/forum/'+course_id+'/#file_tab')
+				if check_validity(file,course_id):
+					if user.role == 'Faculty' or user == file.user:
+						file.file.delete()
+						file.delete()
+					return HttpResponseRedirect('/forum/'+course_id+'/#file_tab')
 
 		elif type == 'as':
 			if Assignment.objects.filter(id=post_id).exists():
 				assignment=Assignment.objects.get(id=post_id)
-				if user.role == 'Faculty' or user == assignment.user:
-					assignment.file.delete()
-					assignment.delete()
-				return HttpResponseRedirect('/forum/'+course_id+'/#assignment_tab')
+				if check_validity(assignment,course_id):
+					if user.role == 'Faculty' or user == assignment.user:
+						assignment.file.delete()
+						assignment.delete()
+					return HttpResponseRedirect('/forum/'+course_id+'/#assignment_tab')
 
 	return HttpResponseRedirect('/')
 
@@ -104,7 +110,7 @@ def post(request,course_id=None,question_id=None):
 					number_of_answers=0, course=Course.objects.get(id=course_id), 
 					anonymous=anonymous)
 				question.save()
-				make_notification(course_id,user)
+				make_notification(course_id,user,anonymous=anonymous)
 				Follows_Question(question=question,student=user).save()
 				return HttpResponseRedirect('/forum/'+course_id)
 			elif type=='Answer':
@@ -114,7 +120,7 @@ def post(request,course_id=None,question_id=None):
 					cur_question.number_of_answers+=1
 					cur_question.save()					
 					ForumAnswer(answer=answer, user=user, question = cur_question, anonymous=anonymous).save()
-					make_notification(course_id,user, cur_question)
+					make_notification(course_id,user, cur_question,anonymous=anonymous)
 					return HttpResponseRedirect('/forum/'+course_id+'/'+question_id)
 
 			elif type=='Comment':
@@ -127,7 +133,7 @@ def post(request,course_id=None,question_id=None):
 					Comment(comment=comment, user=user, answer = cur_answer, anonymous=anonymous).save()
 					return HttpResponseRedirect('/forum/'+course_id+'/'+question_id)
 
-			elif type=='Assignment':
+			elif type=='Assignment' and user.role == 'Faculty':
 				title = request.POST['title']
 				description = request.POST['description'].replace('\n','<br>')
 				deadline = request.POST['date']

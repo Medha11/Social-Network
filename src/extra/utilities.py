@@ -30,14 +30,27 @@ def getRSS(user):
 		feeds += RSSStore.objects.filter(Category=topic)
 	return feeds	
 
-def make_notification(course_id,user, question=None): #TODO Reuse code !!!!!!!!!!
+
+
+############################################################################################
+#####                                                                                 ######
+#####                              Notifications                                      ######
+#####                                                                                 ######
+#####                                                                                 ######
+############################################################################################
+
+def make_notification(course_id,user, question=None, anonymous=False): #TODO Reuse code !!!!!!!!!!
 	course = Course.objects.get(id=course_id)
 	if question: # creating notifications for answers
 
 		students = question.followers.all()
 		link = '/forum/' + course_id + '/' + str(question.id)
 		object_id = question.id
-		new_notification=Notification(type='Answer',user_name = user.user.first_name, link=link, 
+		if anonymous:
+			user_name = 'Anonymous'
+		else:
+			user_name = user.user.first_name
+		new_notification=Notification(type='Answer',user_name = user_name, link=link, 
 							object_id=object_id)
 		new_notification.save()
 		for student in students:
@@ -47,7 +60,11 @@ def make_notification(course_id,user, question=None): #TODO Reuse code !!!!!!!!!
 		students = course.students.all()
 		link = '/forum/' + course_id
 		object_id = course.id
-		new_notification=Notification(type='Question',user_name = user.user.first_name, link=link, object_id=object_id)
+		if anonymous:
+			user_name = 'Anonymous'
+		else:
+			user_name = user.user.first_name
+		new_notification=Notification(type='Question',user_name = user_name, link=link, object_id=object_id)
 		new_notification.save()
 		for student in students:
 			SetNotification(notification=new_notification,user=student,link=link).save()
@@ -145,6 +162,13 @@ def update_notifications(user, id,question_id=None):  #functions deletes visited
 	return get_notifications(user)
 
 
+############################################################################################
+#####                                                                                 ######
+#####                              Confirmation mail                                  ######
+#####                                                                                 ######
+#####                                                                                 ######
+############################################################################################
+
 #confimation mail
 def confirmation(email,unique_code):
 
@@ -165,26 +189,45 @@ def confirmation(email,unique_code):
 		except: None
 	return False
 
+############################################################################################
+#####                                                                                 ######
+#####                              Validity                                           ######
+#####                                                                                 ######
+#####                                                                                 ######
+############################################################################################
+
 def authorize(profile, course_id):
 	if profile.courses.filter(id=course_id).exists():
 		return True
 	return False
 
-
+def check_validity(object, course_id): #function checks if object belongs to course
+		return str(object.course.id) == str(course_id)
 
 
 #This class is used to create an object for the html which incorporates both answers and comments
 
 class Answer:
-
 	def __init__(self, answer):
 		from forum.models import Comment
 		self.answer = answer
 		self.comments = Comment.objects.filter(answer=answer).order_by('-date')
 
+
+############################################################################################
+#####                                                                                 ######
+#####                              FILE Handling                                      ######
+#####                                                                                 ######
+#####                                                                                 ######
+############################################################################################
+
 def upload_to_function(instance, filename): #function for dynamic file handling for assignments
 	import os
 	return os.path.join('files',instance.course.course_id,filename)
+
+def upload_solution_to_function(instance, filename): #function for dynamic file handling for assignments
+	import os
+	return os.path.join('files',instance.course.course_id,'solutions',filename)
 
 
 def create_file(files,id,object): #stores in temp folder, zips, saves and removes the temp files

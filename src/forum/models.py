@@ -42,12 +42,18 @@ class Assignment(models.Model):
 	title = models.CharField(max_length=100, default=None)
 	description = models.TextField(default='No Description')
 	date = models.DateTimeField(auto_now_add=True)
-	course = models.ForeignKey('basic.Course', default=None)
+	course = models.ForeignKey('basic.Course')
 	deadline = models.DateTimeField()
 	file = models.FileField(upload_to=upload_to_function)
 
 	def __unicode__(self):
 		return self.title
+
+class AssignmentSolution(models.Model):
+	assignment = models.ForeignKey('Assignment')
+	file = models.FileField(upload_to=upload_solution_to_function)
+	user = models.ForeignKey('basic.UserProfile')
+	date = models.DateTimeField(auto_now=True)
 
 class Follows_Question(models.Model):
 	question = models.ForeignKey(ForumQuestion)
