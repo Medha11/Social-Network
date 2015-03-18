@@ -49,10 +49,15 @@ class Assignment(models.Model):
 	def __unicode__(self):
 		return self.title
 
+class Pending(models.Model):
+	student = models.ForeignKey('basic.UserProfile')
+	assignment = models.ForeignKey('Assignment')
+
 class AssignmentSolution(models.Model):
 	assignment = models.ForeignKey('Assignment')
 	file = models.FileField(upload_to=upload_solution_to_function)
 	user = models.ForeignKey('basic.UserProfile')
+	course = models.ForeignKey('basic.Course')
 	date = models.DateTimeField(auto_now=True)
 
 class Follows_Question(models.Model):

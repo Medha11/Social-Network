@@ -8,5 +8,5 @@ urlpatterns = patterns('',
 	url(r'^post/$', views.post, name='post'),	
 	url(r'^post/delete/$', views.delete_post, name='delete_post'),
 	url(r'^post/delete/(?P<type>\w+)/(?P<course_id>\w+)/(?P<post_id>\w+)/$', views.delete_post, name='delete_posts'),	
-	url(r'^post/(?P<course_id>\w+)/(?P<question_id>\w+)/$', views.post, name='posts'),
+	url(r'^post/(?P<course_id>\w+)/(?P<object_id>\w+)/$', views.post, name='posts'),
 	)

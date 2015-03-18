@@ -106,7 +106,7 @@
 
           <div class="row">
             <div class="col-md-3">
-              <span class = "btn btn-primary btn-block" style="position: relative; overflow: hidden;"> Upload File(s)<input type="file" name="files" id="upload_file" multiple> </input> </span>
+              <span class = "btn btn-primary btn-block" style="position: relative; overflow: hidden;"> Upload File(s)<input type="file" name="files" id="upload_file" multiple required> </input> </span>
             </div>
             <div class="col-md-9" > 
               <input type="text" class="form-control" readonly id="filename_upload" name="filename" placeholder="No files uploaded"> &nbsp; &nbsp;
@@ -131,33 +131,26 @@
 
 
 
-<div class="modal fade" id="FileUpload"  tabindex="-1" role="dialog" aria-labelledby="FileUploadLabel" aria-hidden="true">
+<div class="modal fade" id="SolutionUpload"  tabindex="-1" role="dialog" aria-labelledby="SolutionUploadLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="FileUploadLabel">Upload Files</h4>
+        <h4 class="modal-title" id="SolutionUploadLabel">Submit Solution</h4>
       </div>
+
       <div class="modal-body">
-        <form id="upload_form" method="post" action="{% url 'post' %}{{ id }}/0/" // TODO
+
+        <form id="solution_form" method="post" action="{% url 'post' %}{{ id }}/0/" // TODO
         enctype="multipart/form-data">
           {% csrf_token %}
-          <div class="form-group">
-            <label for="title" class="control-label">Title:</label>
-            <input type="text" class="form-control" id="title" name="title" autofocus required>
-          </div>
-          <input type="text" class="hidden" name="type" value="File" required>
-          <div class="form-group">
-            <label for="Question" class="control-label">Description: (Optional)</label>
-            <textarea class="form-control" id="description" name="description" ></textarea>
-          </div>
-
+          <input type="text" class="hidden" name="type" value="Solution" id="Solution" required>
           <div class="row">
             <div class="col-md-3">
-              <span class = "btn btn-primary btn-block" style="position: relative; overflow: hidden;"> Upload File(s)<input type="file" name="files" id="upload_file" multiple> </input> </span>
+              <span class = "btn btn-primary btn-block" style="position: relative; overflow: hidden;"> Upload File<input type="file" name="file" id="upload_solution" required> </input> </span>
             </div>
             <div class="col-md-9" > 
-              <input type="text" class="form-control" readonly id="filename_upload" name="filename" placeholder="No files uploaded"> &nbsp; &nbsp;
+              <input type="text" class="form-control" readonly id="filename_solution" name="filename" placeholder="No files uploaded"> &nbsp; &nbsp;
             </div>
           </div>
 
@@ -165,7 +158,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" form="upload_form">Submit</button>
+        <button type="submit" class="btn btn-primary" form="solution_form">Submit</button>
       </div>
     </div>
   </div>
@@ -360,6 +353,18 @@
                {% if assignment.file %}
                   <a class="btn btn-primary" href="{% url 'home' %}media/{{ assignment.file }}"> Download Assignment </a>
                 {%  endif %}
+                {% if User.role == 'Student' %}
+                  {% if assignment in User.pending_assignments.all %}
+
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-url="{% url 'post' %}{{ id }}/{{ assignment.id }}/" data-type="Solution" data-target="#SolutionUpload" >Submit</button> 
+
+                  {% else %}
+
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-url="{% url 'post' %}{{ id }}/{{ assignment.id }}/" data-type="SolutionResubmit" data-target="#SolutionUpload" >Resubmit</button> 
+                    &nbsp; <span style="font-style:italic"><strong>Submitted </strong> {{assignment.date|age}}</span>
+                  {% endif %}
+
+                 {%  endif %}
                       <span class="pull-right" >  
                 <!--      {% if question.anonymous %}
                         <strong> Asked By: </strong> Anonymous <br>
@@ -480,6 +485,16 @@
 </script>
 
 <script>
+// change url of solution post
+$('#SolutionUpload').on('show.bs.modal', function (e) {
+      var button = $(e.relatedTarget); // Button that triggered the modal
+      var url = button.data('url');
+      var type = button.data('type');
+      var modal = $(this);
+      modal.find('form[id="solution_form"]').attr('action',url);
+      modal.find('input[id="Solution"]').attr('value',type);
+    });
+
 
 $('.ajax').click(function(){
     
@@ -550,18 +565,23 @@ $('#delete').on('show.bs.modal', function (e) {
 
 // Displaying filenames of multiple filenames
 
-$("#assign_file, #upload_file").on("change", function(){
+$("#assign_file, #upload_file, #upload_solution").on("change", function(){
    var files = this.files,
        fileName = "\""+files[0].name+"\"";
 
     for (var i=1; i<files.length; i++){
       fileName+=", "+"\""+files[i].name+"\"";
     }
-    var elem = document.getElementById("filename");
+
+    var elem;
+    if(elem = document.getElementById("filename")){
     elem.value = fileName;
+  }
     elem = document.getElementById("filename_upload");
+    elem.vale = fileName;
+    if(elem = document.getElementById("filename_solution")){
     elem.value = fileName;
-   
+  }
 });
 
     /* reset modal on close /*

@@ -17,9 +17,9 @@ class UserProfile(models.Model):
 
 	questions_followed =  models.ManyToManyField('forum.ForumQuestion', through='forum.Follows_Question',
 								 through_fields=('student', 'question'))
-	
-	pending_assignments = models.ManyToManyField('forum.ForumQuestion', through='forum.Follows_Question',
-								 through_fields=('student', 'question'))
+
+	pending_assignments = models.ManyToManyField('forum.Assignment', through='forum.Pending',
+								 through_fields=('student', 'assignment'))
 
 	def __unicode__(self):
 		return self.user.username

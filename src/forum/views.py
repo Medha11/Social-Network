@@ -94,7 +94,7 @@ def delete_post(request,type="",course_id=None,post_id=None):
 
 # View for posting questions, answers and comments
 @login_required
-def post(request,course_id=None,question_id=None):
+def post(request,course_id=None,object_id=None):
 	user = getProfile(request)
 
 	if authorize(user, course_id):
@@ -115,38 +115,44 @@ def post(request,course_id=None,question_id=None):
 				return HttpResponseRedirect('/forum/'+course_id)
 			elif type=='Answer':
 				answer = request.POST['post'].replace('\n','<br>')
-				if ForumQuestion.objects.filter(id=question_id).exists():
-					cur_question = ForumQuestion.objects.get(id=question_id)
-					cur_question.number_of_answers+=1
-					cur_question.save()					
-					ForumAnswer(answer=answer, user=user, question = cur_question, anonymous=anonymous).save()
-					make_notification(course_id,user, cur_question,anonymous=anonymous)
-					return HttpResponseRedirect('/forum/'+course_id+'/'+question_id)
+				if ForumQuestion.objects.filter(id=object_id).exists():
+					cur_question = ForumQuestion.objects.get(id=object_id)
+					if check_validity(cur_question,course_id):	
+						cur_question.number_of_answers+=1
+						cur_question.save()			
+						ForumAnswer(answer=answer, user=user, question = cur_question, 
+										anonymous=anonymous).save()
+						make_notification(course_id,user, cur_question,anonymous=anonymous)
+						return HttpResponseRedirect('/forum/'+course_id+'/'+object_id)
 
 			elif type=='Comment':
 				comment = request.POST['post'].replace('\n','<br>')
 				ans_id = request.POST['answer']
 				if ForumAnswer.objects.filter(id=ans_id).exists():
 					cur_answer = ForumAnswer.objects.get(id=ans_id)
-					cur_answer.number_of_comments+=1
-					cur_answer.save()
-					Comment(comment=comment, user=user, answer = cur_answer, anonymous=anonymous).save()
-					return HttpResponseRedirect('/forum/'+course_id+'/'+question_id)
+					if check_validity(cur_answer.question,course_id):
+						cur_answer.number_of_comments+=1
+						cur_answer.save()
+						Comment(comment=comment, user=user, answer = cur_answer, anonymous=anonymous).save()
+						return HttpResponseRedirect('/forum/'+course_id+'/'+object_id)
 
 			elif type=='Assignment' and user.role == 'Faculty':
 				title = request.POST['title']
 				description = request.POST['description'].replace('\n','<br>')
 				deadline = request.POST['date']
+				course=Course.objects.get(id=course_id)
 				date = deadline[6:]+'-'+deadline[:2]+'-'+deadline[3:5]
 				if not description:
 					description = 'No Description'
 				new_assignment = Assignment(title=title, description=description, 
-					course=Course.objects.get(id=course_id), deadline=date)
+					course=course, deadline=date)
 				
 				if 'files' in request.FILES:
-					create_file(request.FILES.getlist('files'),course_id,new_assignment)
+					create_zip(request.FILES.getlist('files'),user.id,new_assignment)
 				else:
 					new_assignment.save()
+				for student in course.students.all():
+					Pending(assignment=new_assignment,student=student).save()
 
 				return HttpResponseRedirect('/forum/'+course_id+'/#assignment_tab')
 
@@ -159,11 +165,38 @@ def post(request,course_id=None,question_id=None):
 					course=Course.objects.get(id=course_id),user = user)
 				
 				if 'files' in request.FILES:
-					create_file(request.FILES.getlist('files'),course_id,new_upload)
+					create_zip(request.FILES.getlist('files'),user.id,new_upload)
 				else:
 					new_upload.save()
 
 				return HttpResponseRedirect('/forum/'+course_id+'/#file_tab')
+
+			elif type=='Solution':
+				if Assignment.objects.filter(id=object_id).exists():
+					assignment = Assignment.objects.get(id=object_id)
+					course=Course.objects.get(id=course_id)
+					if check_validity(assignment,course_id):
+						new_solution = AssignmentSolution(assignment= assignment, 
+								course=course, user = user)
+						new_solution.file = request.FILES['file']
+						new_solution.save()
+						Pending.objects.get(assignment=assignment,student=user).delete()
+						return HttpResponseRedirect('/forum/'+course_id+'/#assignment_tab')
+
+			elif type=='SolutionResubmit':
+					assignment = Assignment.objects.get(id=object_id)
+					if check_validity(assignment,course_id):
+						try:
+							print "dsa"
+							solution = AssignmentSolution.objects.get(assignment= assignment,user = user)
+							solution.file.delete()
+							print "dsa"
+							solution.file = request.FILES['file']
+							solution.save()
+							return HttpResponseRedirect('/forum/'+course_id+'/#assignment_tab')
+						except:None
+
+					
 
 		
 

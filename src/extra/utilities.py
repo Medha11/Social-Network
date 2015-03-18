@@ -230,11 +230,11 @@ def upload_solution_to_function(instance, filename): #function for dynamic file 
 	return os.path.join('files',instance.course.course_id,'solutions',filename)
 
 
-def create_file(files,id,object): #stores in temp folder, zips, saves and removes the temp files
+def create_zip(files,id,object): #stores in temp folder, zips, saves and removes the temp files
 	import os
 	import zipfile	
 	from django.core.files import File
-	BASE = os.path.join(settings.BASE_DIR,'temp',id)
+	BASE = os.path.join(settings.BASE_DIR,'temp',str(id))
 	try:
 		os.makedirs(BASE)
 	except: None
