@@ -3,8 +3,7 @@ TODO
 -> Sorting answers according to votes, date
 -> Badges for questions not viewed
 
--> Upload assignment solutions
--> Assignment Overview for professor
+
 
 -> Proper profiles
 -> Course assigning interface for adding professors and students to course(optional)
@@ -21,6 +20,8 @@ DONE
 -> Proper date time conversions
 -> Follow button for questions and proper notifications on new answers
 -> Dynamic notifications
+-> Upload assignment solutions
+-> Assignment Overview for professor
 
 
 Instructions
