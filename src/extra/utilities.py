@@ -40,7 +40,7 @@ def getRSS(user):
 #####                                                                                 ######
 ############################################################################################
 
-def make_notification(course_id,user, question=None, anonymous=False): #TODO Reuse code !!!!!!!!!!
+def make_notification(course_id,user, question=None, anonymous=False,assignment_id=None): #TODO Reuse code !!!!!!!!!!
 	course = Course.objects.get(id=course_id)
 	if question: # creating notifications for answers
 
@@ -55,7 +55,17 @@ def make_notification(course_id,user, question=None, anonymous=False): #TODO Reu
 							object_id=object_id)
 		new_notification.save()
 		for student in students:
-			SetNotification(notification=new_notification,user=student,link=link).save()
+			SetNotification(notification=new_notification,user=student,keyword=link).save()
+
+
+	elif assignment_id:
+		students = course.students.all().filter(role='Student')
+		link = '/forum/' + course_id + '/#assignment_tab'
+		object_id = course.id
+		new_notification=Notification(type='Assignment',link=link, object_id=object_id)
+		new_notification.save()
+		for student in students:
+			SetNotification(notification=new_notification,user=student,keyword=str(assignment_id)).save()
 
 	else:
 		students = course.students.all()
@@ -68,7 +78,7 @@ def make_notification(course_id,user, question=None, anonymous=False): #TODO Reu
 		new_notification=Notification(type='Question',user_name = user_name, link=link, object_id=object_id)
 		new_notification.save()
 		for student in students:
-			SetNotification(notification=new_notification,user=student,link=link).save()
+			SetNotification(notification=new_notification,user=student,keyword=link).save()
 
 
 def get_notifications(user): #function for consolidated notifications
@@ -99,8 +109,26 @@ def get_notifications(user): #function for consolidated notifications
 				notification = frame_answer_notification(unique_length,title,names,question.course)
 				if notification:
 					list.append(ConsolidatedNotifications(notification,question_answers[0].link))
+
+	if user.notifications.filter(type='Assignment').exists():
+		assignments = user.notifications.filter(type='Assignment')
+		for course in user.courses.all():
+			course_assignments = assignments.filter(object_id=course.id)
+			if course_assignments:
+				length = len(course_assignments)
+				notification = frame_assignment_notification(length,course)
+				if notification:
+					list.append(ConsolidatedNotifications(notification,course_assignments[0].link))
 			
 	return list
+
+def frame_assignment_notification(length,course):
+	if length > 1:
+		notification = 'You have <strong>'+course.name+'</strong> assignments pending.'
+	else:
+		notification = 'You have a <strong>'+course.name+'</strong> assignment pending.'
+
+	return notification
 
 def frame_question_notification(unique_length, length, names,course): #framing notifications
 	notification = None
@@ -165,11 +193,13 @@ class AssignmentClass: #class for returning consolidated notifications
 				self.solution =  AssignmentSolution.objects.get(user=user,assignment=assignment)
 
 
-def update_notifications(user, id,question_id=None):  #functions deletes visited notifications
+def update_notifications(user, id,question_id=None,assignment_id=None):  #functions deletes visited notifications
 	link = '/forum/'+id
 	if question_id:
 		link+= '/'+question_id
-	SetNotification.objects.filter(user=user,link=link).delete()
+	elif assignment_id:
+		link=str(assignment_id)
+	SetNotification.objects.filter(user=user,keyword=link).delete()
 	return get_notifications(user)
 
 

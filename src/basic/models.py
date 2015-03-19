@@ -9,7 +9,7 @@ class UserProfile(models.Model):
 	reg = models.CharField(max_length=12, unique=True, blank=True)
 	website = models.URLField(blank=True)
 	picture = models.ImageField(upload_to='profile_images', blank=True)
-	courses = models.ManyToManyField('Course', through='Membership', through_fields=('student', 'course'))
+	courses = models.ManyToManyField('Course', through='Membership', through_fields=('member', 'course'))
 	notifications = models.ManyToManyField('Notification', through='SetNotification', 
 						through_fields=('user', 'notification'))
 	role = models.CharField(max_length=20, default="Student")
@@ -33,13 +33,13 @@ class Register(models.Model):
 class Course(models.Model):
 	name = models.CharField(max_length=40)
 	course_id = models.CharField(max_length=10, unique=True)
-	students = models.ManyToManyField(UserProfile, through='Membership', through_fields=('course', 'student'))
+	students = models.ManyToManyField(UserProfile, through='Membership', through_fields=('course', 'member'))
 	def __unicode__(self):
 		return self.name
 
 class Membership(models.Model):
 	course = models.ForeignKey(Course)
-	student = models.ForeignKey(UserProfile)
+	member = models.ForeignKey(UserProfile)
 
 
 class Notification(models.Model):
@@ -59,4 +59,4 @@ class Notification(models.Model):
 class SetNotification(models.Model):
 	notification = models.ForeignKey(Notification)
 	user = models.ForeignKey(UserProfile)
-	link = models.CharField(max_length=100)
+	keyword = models.CharField(max_length=100)

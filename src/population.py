@@ -43,12 +43,12 @@ wire.save()
 
 #assigning course
 
-Membership(student=admin,course=dbms).save()
-Membership(student=mishra,course=dbms).save()
-Membership(student=rohit,course=dbms).save()
-Membership(student=sid,course=dbms).save()
-Membership(student=admin,course=wire).save()
-Membership(student=sid,course=wire).save()
+Membership(member=admin,course=dbms).save()
+Membership(member=mishra,course=dbms).save()
+Membership(member=rohit,course=dbms).save()
+Membership(member=sid,course=dbms).save()
+Membership(member=admin,course=wire).save()
+Membership(member=sid,course=wire).save()
 
 #creating topics
 tech = Topic(name="Tech")

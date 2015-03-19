@@ -104,7 +104,7 @@ def delete_post(request,type="",course_id=None,post_id=None):
 			if Assignment.objects.filter(id=post_id).exists():
 				assignment=Assignment.objects.get(id=post_id)
 				if check_validity(assignment,course_id):
-					if user.role == 'Faculty' or user == assignment.user:
+					if user == assignment.user:
 						assignment.file.delete()
 						assignment.delete()
 					return HttpResponseRedirect('/forum/'+course_id+'/#assignment_tab')
@@ -171,6 +171,7 @@ def post(request,course_id=None,object_id=None):
 					create_zip(request.FILES.getlist('files'),user.id,new_assignment)
 				else:
 					new_assignment.save()
+				make_notification(course_id,user,assignment_id=new_assignment.id)
 				for student in course.students.all():
 					Pending(assignment=new_assignment,student=student).save()
 
@@ -200,6 +201,7 @@ def post(request,course_id=None,object_id=None):
 								course=course, user = user)
 						new_solution.file = request.FILES['file']
 						new_solution.save()
+						notifications = update_notifications(user, course_id,assignment_id=object_id)
 						Pending.objects.get(assignment=assignment,student=user).delete()
 						return HttpResponseRedirect('/forum/'+course_id+'/#assignment_tab')
 

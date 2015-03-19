@@ -18,19 +18,14 @@
 
     <div class="panel panel-default">
 
-     <ul class="list-group">
-        <div class="panel-header">
-
-           <!-- AJAX follow button -->
-
-             <h2> &nbsp; {{ assignment.title }} </h2>
+     <h2> &nbsp; {{ assignment.title }} </h2>
+     <h6 style="font-style:italic"> &nbsp; &nbsp; &nbsp; &nbsp;{{ assignment.date|age }} </h6>
           
-        </div>
        
         <div class="panel-body" style="background-color:transparent">
          {% if solutions %}
 
-           <table class="table">
+           <table class="table table-hover table-bordered">
               <thead>
                 <tr>
                   <th> Name </th>
@@ -49,15 +44,9 @@
               </tr> 
               {% endfor %}
               </tbody>
-            
-
-
-
-
             </table>
 
           {% endif %}
-        <br><br>
         </div>
 
       </div>
