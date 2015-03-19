@@ -28,11 +28,31 @@ def forum(request, course_id, question_id=None):
 			course = Course.objects.get(id=course_id)
 			questions = ForumQuestion.objects.filter(course = course).order_by('-date')
 			assignments = Assignment.objects.filter(course = course).order_by('-date')
+			Assignments = []
+			for assignment in assignments:
+				Assignments.append(AssignmentClass(assignment,user))
 			files = ForumFile.objects.filter(course = course).order_by('-date')
 			return render(request,'forum/forum.html',{'questions':questions,'User':user,'id':course_id, 
-														'assignments':assignments,'files':files,
+														'Assignments':Assignments,'files':files,
 														'Notifications':notifications})
 
+		
+	return HttpResponseRedirect('/')
+
+
+@login_required
+def assignment(request, course_id, assignment_id=None):
+
+	user=getProfile(request)
+	if authorize(user,course_id) and user.role == 'Faculty': # Checking if course exists and user is part of it
+	
+		if Assignment.objects.filter(id=assignment_id).exists():  #Checking if question exists
+			notifications = get_notifications(user)
+			assignment = Assignment.objects.get(id=assignment_id)
+			if check_validity(assignment,course_id):
+				solutions = AssignmentSolution.objects.filter(assignment = assignment).order_by('user__user__first_name')
+				return render(request,'forum/assignment.html',{'assignment':assignment, 'solutions':solutions,
+							'User':user, 'course_id':course_id, 'Notifications':notifications})
 		
 	return HttpResponseRedirect('/')
 

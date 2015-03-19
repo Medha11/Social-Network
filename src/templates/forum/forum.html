@@ -229,8 +229,8 @@
       <li id="forum-li" role="presentation" class="active"><a href="#forum" id="forum-tab" role="tab" data-toggle="tab" aria-controls="forum" aria-expanded="true">Forum <span class="badge"></span> </a></li>
       <li id="assignment-li" role="presentation"><a href="#assignment" role="tab" id="assignment-tab" data-toggle="tab" aria-controls="assignment">Assignments
 
-          {% if assignments %}
-            <span class="badge"> {{ assignments|length }}</span>
+          {% if Assignments %}
+            <span class="badge"> {{ Assignments|length }}</span>
           {% endif %}
       </a></li>
 
@@ -324,21 +324,21 @@
   <div role="tabpanel" class="tab-pane fade" id="assignment" aria-labelledBy="assignment-tab">
 
   <!-- Checking for assignments in forum -->
-    {% if assignments %}
+    {% if Assignments %}
 
-      {% for assignment in assignments %}
+      {% for assignment in Assignments %}
         <div class="panel panel-default">
             
           <ul class="list-group">
 
              <div class="panel-header">
-              {% if file.user.user == user or User.role == "Faculty" %} <!-- Checking if question posted by current user -->
+              {% if User.role == "Faculty" %} <!-- Checking if question posted by current user -->
 
-                <a data-url="{% url 'delete_post' %}as/{{ id }}/{{ assignment.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:10px; bottom:10px"> <span class="glyphicon glyphicon-remove"></span></a> <!-- Delete button -->
+                <a data-url="{% url 'delete_post' %}as/{{ id }}/{{ assignment.assignment.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:10px; bottom:10px"> <span class="glyphicon glyphicon-remove"></span></a> <!-- Delete button -->
                 
 
               {% endif %}
-              <h2>  &nbsp;  {{ assignment.title }}  </h2> 
+              <h2>  &nbsp;  {{ assignment.assignment.title }}  </h2> 
               
             </div>
 
@@ -346,22 +346,26 @@
         
               <div class="panel-body" style="background-color:transparent">
                 
-                {{ assignment.description|safe }}
+                {{ assignment.assignment.description|safe }}
                 <br> </br>
                   <li class="list-group-item" style="background-color:transparent">
                <!--       <a href="{% url 'forum' %}{{ id }}/{{ question.id }}" class="btn btn-default btn-lg" >View Answers <span class="badge">{{ question.number_of_answers  }}</span></a> -->
-               {% if assignment.file %}
-                  <a class="btn btn-primary" href="{% url 'home' %}media/{{ assignment.file }}"> Download Assignment </a>
+               {% if assignment.assignment.file %}
+                  <a class="btn btn-primary" href="{% url 'home' %}media/{{ assignment.assignment.file }}"> Download Assignment </a>
                 {%  endif %}
-                {% if User.role == 'Student' %}
-                  {% if assignment in User.pending_assignments.all %}
+                {% if User.role == "Faculty" %}
+                  <a class="btn btn-primary" href="{% url 'forum' %}assign/{{ id }}/{{ assignment.assignment.id }}"> View Submissions </a>
+                {% endif %}
 
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-url="{% url 'post' %}{{ id }}/{{ assignment.id }}/" data-type="Solution" data-target="#SolutionUpload" >Submit</button> 
+                {% if User.role == 'Student' %}
+                  {% if assignment.assignment in User.pending_assignments.all %}
+
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-url="{% url 'post' %}{{ id }}/{{ assignment.assignment.id }}/" data-type="Solution" data-target="#SolutionUpload" >Submit</button> 
 
                   {% else %}
 
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-url="{% url 'post' %}{{ id }}/{{ assignment.id }}/" data-type="SolutionResubmit" data-target="#SolutionUpload" >Resubmit</button> 
-                    &nbsp; <span style="font-style:italic"><strong>Submitted </strong> {{assignment.date|age}}</span>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-url="{% url 'post' %}{{ id }}/{{ assignment.assignment.id }}/" data-type="SolutionResubmit" data-target="#SolutionUpload" >Resubmit</button> 
+                    &nbsp; <span style="font-style:italic"><strong>Submitted </strong> {{assignment.solution.date|age}}</span>
                   {% endif %}
 
                  {%  endif %}
@@ -371,9 +375,9 @@
                       {% else %}
                         <strong> Asked By: </strong> <a href="{% url 'profile' %}{{ question.user.user.username }}"> {{ question.user.user.get_full_name }} </a> <br>
                       {% endif %} -->
-                        <strong> Assigned: </strong> {{ assignment.date|age  }}
+                        <strong> Assigned: </strong> {{ assignment.assignment.date|age  }}
                         <br>
-                        <strong> Time left: </strong> {{ assignment.deadline|until  }}
+                        <strong> Time left: </strong> {{ assignment.assignment.deadline|until  }}
                       </span>
                   </li>
                 

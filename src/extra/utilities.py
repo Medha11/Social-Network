@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
 from basic.models import *
+
 from socnet import settings
 from rss.models import *
 
@@ -153,6 +154,15 @@ class ConsolidatedNotifications: #class for returning consolidated notifications
 	def __init__(self, notification, link):
 		self.notification = notification
 		self.link = link 
+
+class AssignmentClass: #class for returning consolidated notifications
+	
+	def __init__(self, assignment, user):
+		from forum.models import AssignmentSolution
+		self.assignment = assignment
+		if user.role == 'Student':
+			self.solution =  AssignmentSolution.objects.get(user=user,assignment=assignment)
+
 
 def update_notifications(user, id,question_id=None):  #functions deletes visited notifications
 	link = '/forum/'+id
