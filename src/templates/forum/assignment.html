@@ -1,0 +1,76 @@
+
+{% extends 'second_base.html' %}
+{% load time_short %}
+{% load staticfiles %}
+{% block second_content %}
+
+
+<!-- Back button -->
+
+
+<a href="{% url 'forum' %}{{ course_id }}/#assignment_tab" class="btn btn-default btn-lg" ><<</a>
+<br>
+<br>
+
+<!-- Question -->
+
+
+
+    <div class="panel panel-default">
+
+     <ul class="list-group">
+        <div class="panel-header">
+
+           <!-- AJAX follow button -->
+
+             <h2> &nbsp; {{ assignment.title }} </h2>
+          
+        </div>
+       
+        <div class="panel-body" style="background-color:transparent">
+         {% if solutions %}
+
+           <table class="table">
+              <thead>
+                <tr>
+                  <th> Name </th>
+                  <th> Date </th>
+                  <th> Solution </th>
+                  <th> Grade </th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for solution in solutions %}
+              <tr>
+                  <td> {{solution.user.user.get_full_name}} </td>
+                  <td> {{solution.date|age }}</td>
+                  <th> <a href="{% url 'home' %}media/{{ solution.file }}"> Download </a> </th>
+                  <td> Grade </td>
+              </tr> 
+              {% endfor %}
+              </tbody>
+            
+
+
+
+
+            </table>
+
+          {% endif %}
+        <br><br>
+        </div>
+
+      </div>
+
+   
+
+
+{% endblock %}
+
+{% block script %}
+<!-- Script to decide the attributes of the modal 
+    We can use the same modal for posting both answers and comments
+-->
+
+
+{% endblock %}
