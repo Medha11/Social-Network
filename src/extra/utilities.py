@@ -161,7 +161,8 @@ class AssignmentClass: #class for returning consolidated notifications
 		from forum.models import AssignmentSolution
 		self.assignment = assignment
 		if user.role == 'Student':
-			self.solution =  AssignmentSolution.objects.get(user=user,assignment=assignment)
+			if AssignmentSolution.objects.filter(user=user,assignment=assignment).exists():
+				self.solution =  AssignmentSolution.objects.get(user=user,assignment=assignment)
 
 
 def update_notifications(user, id,question_id=None):  #functions deletes visited notifications
