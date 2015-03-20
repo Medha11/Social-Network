@@ -69,7 +69,12 @@ def delete_post(request,type="",course_id=None,post_id=None):
 				question=ForumQuestion.objects.get(id=post_id)
 				if check_validity(question,course_id):
 					if user.role == 'Faculty' or user == question.user: #confirming that the post belongs to user
+						if question.anonymous:
+							user_name='Anonymous'
+						else:
+							user_name=question.user.user.first_name
 						question.delete()
+						remove_notification(course_id,'Question',user_name,question.id)
 					return HttpResponseRedirect('/forum/'+course_id)
 		elif type =='a':
 			if ForumAnswer.objects.filter(id=post_id).exists():
@@ -79,7 +84,12 @@ def delete_post(request,type="",course_id=None,post_id=None):
 						answer.question.number_of_answers-=1
 						answer.question.save()
 						question_id = answer.question.id;
+						if answer.anonymous:
+							user_name='Anonymous'
+						else:
+							user_name=answer.user.user.first_name
 						answer.delete()
+						remove_notification(question_id,'Answer',user_name)
 					return HttpResponseRedirect('/forum/'+course_id+'/'+str(question_id))
 		elif type == 'c':
 			if Comment.objects.filter(id=post_id).exists():
@@ -104,9 +114,10 @@ def delete_post(request,type="",course_id=None,post_id=None):
 			if Assignment.objects.filter(id=post_id).exists():
 				assignment=Assignment.objects.get(id=post_id)
 				if check_validity(assignment,course_id):
-					if user == assignment.user:
+					if user.role=='Faculty':
 						assignment.file.delete()
 						assignment.delete()
+						remove_notification(course_id,'Assignment')
 					return HttpResponseRedirect('/forum/'+course_id+'/#assignment_tab')
 
 	return HttpResponseRedirect('/')

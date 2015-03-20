@@ -40,6 +40,15 @@ def getRSS(user):
 #####                                                                                 ######
 ############################################################################################
 
+def remove_notification(object_id,type,user_name=None,question_id=None):	
+	if not user_name:
+		user_name=''
+	if Notification.objects.filter(type=type, object_id=object_id,user_name=user_name).exists():
+			Notification.objects.filter(type=type, object_id=object_id,user_name=user_name)[0].delete()
+	if type == 'Question':
+		if Notification.objects.filter(type=type, object_id=question_id).exists():
+			Notification.objects.filter(type=type, object_id=question_id).delete()
+
 def make_notification(course_id,user, question=None, anonymous=False,assignment_id=None): #TODO Reuse code !!!!!!!!!!
 	course = Course.objects.get(id=course_id)
 	if question: # creating notifications for answers
@@ -67,7 +76,7 @@ def make_notification(course_id,user, question=None, anonymous=False,assignment_
 		for student in students:
 			SetNotification(notification=new_notification,user=student,keyword=str(assignment_id)).save()
 
-	else:
+	else: #notifications for questions
 		students = course.students.all()
 		link = '/forum/' + course_id
 		object_id = course.id
