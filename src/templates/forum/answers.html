@@ -85,7 +85,7 @@
      <ul class="list-group">
         <div class="panel-header">
           {% if question.user.user == user or User.role == "Faculty" %}
-            <a data-url="{% url 'delete_post' %}q/{{ course_id }}/{{ question.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:10px; bottom:10px"> <span class="glyphicon glyphicon-remove"></span></a> <!-- Delete button -->
+            <a data-url="{% url 'delete_post' %}q/{{ course_id }}/{{ question.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:10px; bottom:10px" title="Delete"> <span class="glyphicon glyphicon-remove" ></span></a> <!-- Delete button -->
           {% endif %}
 
            <!-- AJAX follow button -->
@@ -135,7 +135,7 @@
           <div class="panel-body">   
 
             {% if Answer.answer.user.user == user or User.role == "Faculty"%}
-              <a data-url="{% url 'delete_post' %}a/{{ course_id }}/{{ Answer.answer.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:4px; bottom:10px"> <span class="glyphicon glyphicon-remove"></span></a> <!-- Delete button -->
+              <a data-url="{% url 'delete_post' %}a/{{ course_id }}/{{ Answer.answer.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:4px; bottom:10px" title="Delete"> <span class="glyphicon glyphicon-remove"></span></a> <!-- Delete button -->
 
             {% endif %}
                {{ Answer.answer.answer|safe }}   
@@ -176,7 +176,7 @@
                     
                     {% for comment in Answer.comments %}
                         {% if comment.user.user == user or User.role == "Faculty" %}
-                          <a data-url="{% url 'delete_post' %}c/{{ course_id }}/{{ comment.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:9px; bottom:5px"> <span>&times;</span></a> <!-- Delete button -->
+                          <a data-url="{% url 'delete_post' %}c/{{ course_id }}/{{ comment.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:9px; bottom:5px" title="Delete"> <span>&times;</span></a> <!-- Delete button -->
                         {% endif %}
 
                         {{ comment.comment|safe }}

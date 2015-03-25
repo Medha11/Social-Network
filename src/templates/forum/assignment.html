@@ -8,49 +8,46 @@
 <!-- Back button -->
 
 
-<a href="{% url 'forum' %}{{ course_id }}/#assignment_tab" class="btn btn-default btn-lg" ><<</a>
-<br>
-<br>
 
-<!-- Question -->
+<h1 class="page-header">
+   <!-- <a class="pull-right close"  href="{% url 'forum' %}{{ course_id }}/#assignment_tab"><span class="glyphicon glyphicon-triangle-left" style="font-size:30px;" title="Add Profile"> </span></a> -->
 
+    {{ assignment.title }}
+    <h6 style="font-style:italic">Assigned {{ assignment.date|age }} </h6>
+    <br>
+</h1>
 
-
-    <div class="panel panel-default">
-
-     <h2> &nbsp; {{ assignment.title }} </h2>
-     <h6 style="font-style:italic"> &nbsp; &nbsp; &nbsp; &nbsp;{{ assignment.date|age }} </h6>
           
-       
-        <div class="panel-body" style="background-color:transparent">
-         {% if solutions %}
+   {% if solutions %}
 
-           <table class="table table-hover table-bordered">
-              <thead>
-                <tr>
-                  <th> Name </th>
-                  <th> Date </th>
-                  <th> Solution </th>
-                  <th> Grade </th>
-                </tr>
-              </thead>
-              <tbody>
-              {% for solution in solutions %}
-              <tr>
-                  <td> {{solution.user.user.get_full_name}} </td>
-                  <td> {{solution.date|age }}</td>
-                  <th> <a href="{% url 'home' %}media/{{ solution.file }}"> Download </a> </th>
-                  <td> Grade </td>
-              </tr> 
-              {% endfor %}
-              </tbody>
-            </table>
+     <table class="table table-hover table-bordered">
+        <thead>
+          <tr>
+            <th> Name </th>
+            <th> Submitted </th>
+            <th> Solution </th>
+            <th> Grade </th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for solution in solutions %}
+        <tr>
+            <td> {{solution.user.user.get_full_name}} </td>
+            <td> {{solution.date|age }}</td>
+            <th> <a href="{% url 'home' %}media/{{ solution.file }}"> Download </a> </th>
+            <td> Grade </td>
+        </tr> 
+        {% endfor %}
+        </tbody>
+      </table>
 
-          {% endif %}
-        </div>
-
+    {% else %}
+      <div class="alert alert-info" role="alert">
+          <div class="row">
+              &nbsp; &nbsp;<strong> No submissions yet!!!! </strong>
+         </div>
       </div>
-
+    {% endif %}
    
 
 

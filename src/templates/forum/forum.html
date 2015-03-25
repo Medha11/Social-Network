@@ -8,9 +8,9 @@
 
    <link href="{% static "css/jquery-ui.min.css" %}" rel="stylesheet">
 
-<!-- Add question -->
+<!-- Add question Button-->
 
-<button type="button" class="pull-right btn btn-default btn-lg" data-toggle="modal" data-target="#question" ><strong>Ask </strong></button> 
+<a class="pull-right close" data-toggle="modal" data-target="#question" ><span class="glyphicon glyphicon-plus" style="font-size:30px;" title="Add Question"> </span></a> 
 
 
 {% if User.role == "Faculty" %}
@@ -225,7 +225,7 @@
 
 <!-- Tabs -->
 
-<ul id="myTab" class="nav nav-tabs" role="tablist">
+<ul id="myTab" class="nav nav-pills nav-justified" role="tablist">
       <li id="forum-li" role="presentation" class="active"><a href="#forum" id="forum-tab" role="tab" data-toggle="tab" aria-controls="forum" aria-expanded="true">Forum <span class="badge"></span> </a></li>
       <li id="assignment-li" role="presentation"><a href="#assignment" role="tab" id="assignment-tab" data-toggle="tab" aria-controls="assignment">Assignments
 
@@ -263,7 +263,7 @@
              <div class="panel-header">
               {% if question.user.user == user or User.role == "Faculty" %} <!-- Checking if question posted by current user -->
 
-              <a data-url="{% url 'delete_post' %}q/{{ id }}/{{ question.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:10px; bottom:10px"> <span class="glyphicon glyphicon-remove"></span></a> <!-- Delete button -->
+              <a data-url="{% url 'delete_post' %}q/{{ id }}/{{ question.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:10px; bottom:10px" title="Delete"> <span class="glyphicon glyphicon-remove"></span></a> <!-- Delete button -->
               
 
               {% endif %}
@@ -299,6 +299,8 @@
                       <span class="pull-right" >  
                       {% if question.anonymous %}
                         <strong> Asked By: </strong> Anonymous <br>
+                      {% elif question.user == User %}
+                        <strong> Asked By: </strong> You <br>
                       {% else %}
                         <strong> Asked By: </strong> <a href="{% url 'profile' %}{{ question.user.user.username }}"> {{ question.user.user.get_full_name }} </a> <br>
                       {% endif %}
@@ -332,9 +334,9 @@
           <ul class="list-group">
 
              <div class="panel-header">
-              {% if User.role == "Faculty" %} <!-- Checking if question posted by current user -->
+              {% if User.role == "Faculty" %} <!-- Checking if faculty -->
 
-                <a data-url="{% url 'delete_post' %}as/{{ id }}/{{ assignment.assignment.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:10px; bottom:10px"> <span class="glyphicon glyphicon-remove"></span></a> <!-- Delete button -->
+                <a data-url="{% url 'delete_post' %}as/{{ id }}/{{ assignment.assignment.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:10px; bottom:10px" title="Delete"> <span class="glyphicon glyphicon-remove"></span></a> <!-- Delete button -->
                 
 
               {% endif %}
@@ -409,9 +411,9 @@
           <ul class="list-group">
 
               <div class="panel-header">
-              {% if file.user.user == user or User.role == "Faculty" %} <!-- Checking if question posted by current user -->
+              {% if file.user.user == user or User.role == "Faculty" %} <!-- Checking if file uploaded by current user -->
 
-                <a data-url="{% url 'delete_post' %}f/{{ id }}/{{ file.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:10px; bottom:10px"> <span class="glyphicon glyphicon-remove"></span></a> <!-- Delete button -->
+                <a data-url="{% url 'delete_post' %}f/{{ id }}/{{ file.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:10px; bottom:10px" title="Delete"> <span class="glyphicon glyphicon-remove"></span></a> <!-- Delete button -->
                 
 
               {% endif %}
@@ -434,9 +436,13 @@
                       {% else %}
                         <strong> Asked By: </strong> <a href="{% url 'profile' %}{{ question.user.user.username }}"> {{ question.user.user.get_full_name }} </a> <br>
                       {% endif %} -->
-                        <strong> Asked By: </strong> <a href="{% url 'profile' %}{{ file.user.user.username }}"> {{ file.user.user.get_full_name }} </a> <br>
-                      
-                        <strong> Asked: </strong> {{ file.date|age  }}
+
+                      {% if file.user == User %}
+                        <strong> Asked By: </strong> You <br>
+                      {% else %}
+                        <strong> Uploaded By: </strong> <a href="{% url 'profile' %}{{ file.user.user.username }}"> {{ file.user.user.get_full_name }} </a> <br>
+                      {% endif %}
+                        <strong> Uploaded: </strong> {{ file.date|age  }}
                       </span>
                   </li>
                 
@@ -582,7 +588,7 @@ $("#assign_file, #upload_file, #upload_solution").on("change", function(){
     elem.value = fileName;
   }
     elem = document.getElementById("filename_upload");
-    elem.vale = fileName;
+    elem.value = fileName;
     if(elem = document.getElementById("filename_solution")){
     elem.value = fileName;
   }
