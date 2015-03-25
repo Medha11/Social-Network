@@ -17,9 +17,8 @@
 
     <!-- Bootstrap core CSS -->
     <link href="{% static "css/bootstrap.css" %}" rel="stylesheet">
-  <link href="{% static "css/sidebar.css" %}" rel="stylesheet">
-  <link href="{% static "css/signup.css" %}" rel="stylesheet">
   <link href="{% static "css/fileinput.css" %}" rel="stylesheet">
+  <link href="{% static "css/dashboard.css" %}" rel="stylesheet">
 
     <!-- Custom styles for this template 
     <link href="css/jumbotron.css" rel="stylesheet"> -->
@@ -36,10 +35,10 @@
     
   </head>
 
-<script src="{% static "javascript/angular.js" %}" data-semver="1.2.5" data-require="angular.js@1.2.5"></script>
 
 
-  <body ng-app="app" ng-controller="NewUserController">
+
+  <body>
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
@@ -150,10 +149,7 @@
      
 {% if user.is_authenticated %}
      <script>
-    $("#menu-toggle").click(function(e) {
-        e.preventDefault();
-        $("#wrapper").toggleClass("toggled");
-    });
+     $(document).scrollTop(0);
     </script>
   {% endif %}
 

@@ -1,0 +1,160 @@
+
+{% extends 'second_base.html' %}
+{% load staticfiles %}
+{% block second_content %}
+
+<link href="{% static "css/preview_image.css" %}" rel="stylesheet">
+
+<div class="row">
+<div class="col-md-1">
+</div>
+
+<div class="col-md-8">
+ 
+      
+  <form name="companyForm"  class="form-signin" method="post" action="{% url 'add_company' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+          <h2 class="form-signin-heading">Register Company</h2>
+          Please complete this form to complete registration
+          
+          <br></br>
+
+    <div class="form-group">
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="container-fluid">
+              <label for="inputEmail">Company Name </label>
+              <input type="text" id="name" title="Like 'Amazon'" class="form-control" placeholder="Enter the Name of the Company"  name="name" value="{{ name }}" required autofocus>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="container-fluid">
+              <label><br></label>
+               <span class = "btn btn-default" style="position: relative; overflow: hidden;"> 
+                  Logo (Optional)<input type="file" id="uploadFile" name="image" /> 
+              </span>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="container-fluid resultImageWrapper">
+              <img src="" alt="" id="resultImage" width="100"  />
+          </div>
+        </div>
+      </div>
+
+        <br>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="container-fluid ">
+
+            <label for="inputEmail" >Website (Optional)</label>
+            <div class="input-group">
+              <span class="input-group-addon">http://</span>
+              <input type="text" id="inputEmail" pattern="www\.[A-Za-z0-9.~:/#@!$'()+,;=-]+\.[a-zA-Z]{2,6}" title="Like 'www.amazon.com'" class="form-control" placeholder="Enter the URL of the website"  name="website" value="{{ lname }}" >
+            </div>
+          </div>
+        </div>
+        
+      </div>
+
+      <br>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="container-fluid">
+            <label for="description">Summary (Optional)</label>
+            <textarea class="form-control" id="summary" name="summary" > </textarea>
+          </div>
+        </div>
+      </div>
+
+      <br>
+
+
+    </div>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit" >Continue</button>
+
+  </form>
+
+
+</div>
+</div>
+<br><br>
+
+
+
+
+
+
+
+
+
+     
+{% endblock %}
+
+{% block script %}
+<script>
+
+$(function() {
+
+   $("#uploadFile").on("change", function(event)
+    {
+        var file = event.target.files[0]; // Multiple files can be dropped. Lets only deal with the "first" one.
+        if (file.type.match('image.*')) {
+            resizeImage(file, 1000, function(result) {
+            $('#resultImage').attr('src', result);
+            $('.resultImageWrapper').show();
+            });
+        } else {
+            alert("That file wasn't an image.");
+        }
+      });
+
+    
+    
+
+      resizeImage = function(file, size, callback) {
+              var fileTracker = new FileReader;
+              fileTracker.onload = function() {
+                  var image = new Image();
+                  image.onload = function(){
+                    var canvas = document.createElement("canvas");
+                    /*
+                    if(image.height > size) {
+                    image.width *= size / image.height;
+                    image.height = size;
+                    }
+                    */
+                      if(image.width > size) {
+                        image.height *= (size / image.width);
+                        image.width = size;
+                      }
+                    var ctx = canvas.getContext("2d");
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    canvas.width = image.width;
+                    canvas.height = image.height;
+                    ctx.drawImage(image, 0, 0, image.width, image.height);
+                    callback(canvas.toDataURL("image/png"));
+                  };
+                  image.src = this.result;
+              }
+            fileTracker.readAsDataURL(file);
+
+            fileTracker.onabort = function() {
+              alert("The upload was aborted.");
+            }
+            fileTracker.onerror = function() {
+              alert("An error occured while reading the file.");
+            }
+      }; 
+
+
+      
+
+    });
+</script>
+{% endblock %}

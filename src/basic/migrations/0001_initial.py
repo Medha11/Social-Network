@@ -13,11 +13,22 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='Branch',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=40)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
             name='Course',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=40)),
                 ('course_id', models.CharField(unique=True, max_length=10)),
+                ('branch', models.ForeignKey(to='basic.Branch')),
             ],
             options={
             },
@@ -76,6 +87,7 @@ class Migration(migrations.Migration):
                 ('website', models.URLField(blank=True)),
                 ('picture', models.ImageField(upload_to=b'profile_images', blank=True)),
                 ('role', models.CharField(default=b'Student', max_length=20)),
+                ('branch', models.ForeignKey(to='basic.Branch', blank=True)),
                 ('courses', models.ManyToManyField(to='basic.Course', through='basic.Membership')),
                 ('notifications', models.ManyToManyField(to='basic.Notification', through='basic.SetNotification')),
                 ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),

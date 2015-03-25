@@ -2,70 +2,53 @@
 
 {% block second_base %}
 
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
 
-<div id="wrapper">
-
-        <!-- Sidebar -->
-        
-        <div id="sidebar-wrapper">
-            <ul class="sidebar-nav">
-                <li class="sidebar-brand">
-                    <a href="#">
-                        Start Bootstrap
-                    </a>
-                </li>
-                
-                
-              {% if User.courses.all %}
+              <ul class="nav nav-sidebar">
+                {% if User.courses.all %}
                     {% for course in User.courses.all %}
                       <li> <a href="{% url 'forum' %}{{ course.id }}"> {{ course.name }} </a> </li>
                     {% endfor %}
-                
+                    
               {% else %}
-                <li>  <strong style="color: #337AB7">You have no registered courses.</strong> </li>
+                <div class="container-fluid">
+                <li>  <strong style="color: #337AB7">You are not registered in any course.</strong> </li>
+              </div>
               {% endif %}
-
-              
-                <li class="divider" style="color: #337AB7"></li>
-
-                <li>
-                    <a href="#">Dummy</a>
-                </li>
-                <li>
-                    <a href="#">Dummy</a>
-                </li>
-                <li>
-                    <a href="#">Dummy</a>
-                </li>
-                <li>
-                    <a href="#">Dummy </a>
-
-                </li>
-                <li>
-                    <a href="#">Dummy</a>
-                </li>
-                
-            </ul>
-
+              </ul>
+              <ul class="nav nav-sidebar">
+                <li><a href="{% url 'tpo' %}">TPO</a></li>
+                <li><a href="">Nav item again</a></li>
+                <li><a href="">One more nav</a></li>
+                <li><a href="">Another nav item</a></li>
+                <li><a href="">More navigation</a></li>
+              </ul>
+              <ul class="nav nav-sidebar">
+                <li><a href="">Nav item again</a></li>
+                <li><a href="">One more nav</a></li>
+                <li><a href="">Another nav item</a></li>
+              </ul>
         </div>
+                
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">    
+
 
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <br></br>
-    
-<div id="page-content-wrapper">
 
 {% block second_content %}
 {% endblock %}
 
-
-<hr>  
-<div class="container-fluid">
-      <footer>
-        <p>&copy; Company 2014</p>
-      </footer>
-    <!-- /container -->
-  </div>
-</div>
+ 
+            <div class="container-fluid">
+              <footer>
+                <p>&copy; Company 2014</p>
+              </footer>
+            </div>
+        </div>
+    </div>
 </div>
 
  

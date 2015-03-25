@@ -308,7 +308,68 @@ def create_zip(files,id,object): #stores in temp folder, zips, saves and removes
 	os.rmdir(BASE)
 
 
+############################################################################################
+#####                                                                                 ######
+#####                                 TPO                                             ######
+#####                                                                                 ######
+#####                                                                                 ######
+############################################################################################
 
-	
+
+class BatchClass:
+
+	def __init__(self, programme, batches,year):
+		self.programme = programme
+		self.batches = batches
+		self.year=year
+
+class BatchListClass:
+
+	def __init__(self, programme, years):
+		self.programme = programme
+		self.years = years 
+ 
+class ConsolidatedProfiles:
+
+	def __init__(self, profile, batches):
+		self.profile = profile
+		self.batches = batches 
+
+def create_batches(): #Creates a list of objects containing prog and years
+	from basic.models import Batch
+	batches = Batch.objects.all().order_by('branch__programme','year')
+	list = batches.values('branch__programme','year').distinct()
+	final = {}
+	for item in list:
+		programme = item['branch__programme']
+		year = item['year']
+		if final.get(programme):
+			final[programme].append(year)
+		else:
+			final[programme]=[year]
+	batches=[]
+	keys = final.keys()
+	keys.sort()
+	for programme in keys:
+		batches.append(BatchListClass(programme,final[programme]))
+	return batches
+
+def get_consolidated_profiles(profiles):
+	Profiles = []
+	for profile in profiles:
+		batches = profile.batches.order_by('branch__programme','year')
+		list = batches.values('branch__programme','year').distinct()
+		final_batches=[]
+		for item in list:
+			programme = item['branch__programme']
+			year = item['year']
+			same_batch = batches.filter(branch__programme=programme, year=year).order_by('branch__name')
+			if same_batch:
+				final_batches.append(BatchClass(programme,same_batch,year))
+		Profiles.append(ConsolidatedProfiles(profile,final_batches))
+	return Profiles
+
+
+
 
 

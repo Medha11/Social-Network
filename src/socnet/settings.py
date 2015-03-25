@@ -49,6 +49,7 @@ INSTALLED_APPS = (
     'basic',
     'rss',
     'forum',
+    'tpo'
 )
 
 MIDDLEWARE_CLASSES = (

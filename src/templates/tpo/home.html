@@ -1,0 +1,121 @@
+
+{% extends 'second_base.html' %}
+{% load time_short %}
+{% load staticfiles %}
+{% block second_content %}
+
+<!-- Modal for selecting batches -->
+
+<div class="modal fade" id="Batch"  tabindex="-1" role="dialog" aria-labelledby="BatchLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="BatchLabel">Select Batches</h4>
+      </div>
+      <div class="modal-body">
+        <form id="formform" method="post" action="{% url 'add_profile' %}">
+          {% csrf_token %}
+          <input type="text" hidden value="selection" name="type" required/>
+          <div class="row">
+              <div class="col-md-12">
+               <div class="container-fluid">
+                <label> Choose the Batches </label>
+                  <br>
+                  <div class = "checkbox">
+                    {% for batch in batches %}
+                      <div class="row">
+                        <div class="col-md-3">
+                          <label> <strong> {{batch.programme}}</strong> </label>
+                        </div>
+                        <div class="col-md-9">
+                          {% for year in batch.years %}
+                            <label>
+                              <input type="checkbox"   name="check" value="{{batch.programme}},{{year}}"/> {{year|safe}}  <br/> 
+                             </label>
+                          {% endfor %}
+                        </div>
+                      </div>
+                      <br>
+                    {% endfor %}
+                  </div>
+               </div>
+
+              </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" form="formform">Continue</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+      <h1 class="page-header">Dashboard 
+          <a class="pull-right close" data-toggle="modal" data-target="#Batch" ><span class="glyphicon glyphicon-plus" style="font-size:30px;" title="Add Profile"> </span></a> 
+      </h1>
+
+
+
+<br></br>
+<br>
+         {% if Profiles %}
+
+           <table class="table table-hover table-bordered">
+              <thead>
+                <tr>
+                  <th> Company </th>
+                  <th> Branches Allowed</th>
+                  <th> CTC (INR/Annum) </th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for Profile in Profiles %}
+              <tr>
+                  <td> {{Profile.profile.company.name}} </td>
+                  <td> 
+                    {% for Batch in Profile.batches %}
+                      <div class="row">
+                        <div class="col-md-3">
+                          <label> <strong> {{Batch.programme}} ({{Batch.year|safe}} year)</strong> </label>
+                        </div>
+
+                        <div class="col-md-9">
+                            {% for batch in Batch.batches %}
+                               {{batch.branch.name}},
+                            {% endfor %}
+                        </div>
+                      </div>
+                    {% endfor %}
+
+                  </td>
+                  <td> 
+                    {% if Profile.profile.ctc %}
+                      {{ Profile.profile.ctc }} 
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+              </tr> 
+              {% endfor %}
+              </tbody>
+            </table>
+
+          {% endif %}
+
+{% endblock %}
+
+{% block script %}
+
+
+  <script>
+
+  
+
+  </script>
+
+
+{% endblock %}
