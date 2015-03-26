@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from .models import *
 from rss.models import *
 from extra.utilities import *
+from extra.notifications import *
 import uuid
 
 def home(request):

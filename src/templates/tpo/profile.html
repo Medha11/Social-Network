@@ -1,0 +1,90 @@
+
+{% extends 'second_base.html' %}
+{% load time_short %}
+{% load staticfiles %}
+{% block second_content %}
+
+<link href="{% static "css/preview_image.css" %}" rel="stylesheet">
+
+
+
+
+      <h1 class="page-header"> 
+        <div class="row">
+          <div class="col-md-2">
+            <a id="link" href="{{ Profile.profile.company.website }}">{{Profile.profile.company.name}}  </a>
+          </div>
+          <div class="col-md-10">
+            <div class="pull-right">
+                <a href="{{ Profile.profile.company.website }}"> <img  src="{% url 'home' %}media/{{ Profile.profile.company.logo }}" alt="" id="resultImage" height="50"  /> </a>
+            </div>
+          </div>
+        </div>
+      </h1>
+
+      <h4> <strong> Summary </strong> </h4>
+      {{Profile.profile.company.summary}}
+      <br></br>
+      <h3 class="page-header"> 
+        <div class="row">
+          <div class="col-md-2">
+             {{Profile.profile.title}} 
+          </div>
+        </div>
+      </h1>
+
+
+      <h4> <strong> Profile Description </strong> </h4>
+      {{Profile.profile.description}}
+      <br></br>
+      <div class="col-md-12">
+        <div class="row">
+            <h5> <strong> CPI Cutoff: </strong> {{Profile.profile.cpi_cutoff}}</h5>
+        </div>
+             
+        <div class="row">
+          
+            <h5> <strong> 
+                    {% if Profile.profile.type == 'Job' %}
+                      Cost to Company: 
+                    {% else %}
+                      Stipend: 
+                    {% endif %}
+                </strong> 
+                      ₹ {{Profile.profile.ctc}}
+                         
+                    {% if Profile.profile.type == 'Job' %}
+                      Lakhs/annum
+                    {% else %}
+                      per month 
+                    {% endif %}
+             </h5>
+        </div>
+
+      </div>
+      <br></br>
+      <br></br>
+      <h4> <strong> Batches Allowed </strong> </h4>
+      {% for Batch in Profile.batches %}
+        <div class="row">
+          <div class="col-md-12">
+            <label> <strong> {{Batch.programme}} ({{Batch.year|safe}} year) - </strong> </label>
+            {% for batch in Batch.batches %}
+                 {{batch.branch.name}},
+              {% endfor %}
+          </div>
+
+        </div>
+      {% endfor %}
+      <div class="row">
+      </div>
+
+
+<br></br>
+<br>
+
+
+
+
+{% endblock %}
+

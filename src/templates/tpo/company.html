@@ -1,0 +1,37 @@
+
+{% extends 'second_base.html' %}
+{% load time_short %}
+{% load staticfiles %}
+{% block second_content %}
+
+<link href="{% static "css/preview_image.css" %}" rel="stylesheet">
+
+
+
+
+      <h1 class="page-header"> 
+        <div class="row">
+          <div class="col-md-2">
+            <a id="link" href="{{ company.website }}">{{company.name}}  </a>
+          </div>
+          <div class="col-md-10">
+            <div class="container-fluid pull-right">
+                <a href="{{ company.website }}"> <img  src="{% url 'home' %}media/{{ company.logo }}" alt="" id="resultImage" height="50"  /> </a>
+            </div>
+          </div>
+        </div>
+      </h1>
+
+      <h4> <strong> Summary </strong> </h4>
+      {{company.summary}}
+
+
+
+<br></br>
+<br>
+
+
+
+
+{% endblock %}
+

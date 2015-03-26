@@ -8,7 +8,8 @@ from django.contrib.auth.models import User
 from rss.models import *
 
 
-#creating branches
+#creating branches and batches
+
 it = Branch(name="Information Technology",programme="B.Tech")
 cs = Branch(name = "Computer Science",programme="B.Tech")
 ece = Branch(name = "Electronic And Communications",programme="B.Tech")

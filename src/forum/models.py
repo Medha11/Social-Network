@@ -70,7 +70,7 @@ class ForumFile(models.Model):
 	user = models.ForeignKey('basic.UserProfile',related_name='uploader')
 	date = models.DateTimeField(auto_now_add=True)
 	course = models.ForeignKey('basic.Course', default=None)
-	file = models.FileField(upload_to=upload_to_function)
+	file = models.FileField(upload_to=upload_file_to_function)
 
 	def __unicode__(self):
 		return self.title

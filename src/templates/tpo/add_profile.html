@@ -43,13 +43,55 @@
         <div class="col-md-6">
           <div class="container-fluid ">
 
-            <label for="inputCTC">CTC (in Lakhs/annum) (Optional)</label>
-              <input type="text" id="ctc" title="Like '10.54'"class="form-control" placeholder="Enter the Cost to Company per annum" pattern="\d+(|\.?\d+)" name="ctc" value="{{ name }}" >
+            <label for="inputCTC">
+              {% if type == 'Job' %}
+                CTC (in Lakh(s)/annum) 
+              {% else %}
+                Stipend (per month)
+              {% endif %}
+                (Optional)
+            </label>
+              <input type="text" id="ctc" title="Like '10.54'"class="form-control" 
+              {% if type == 'Job' %}
+                placeholder="Enter the Cost to Company per annum" 
+              {% else %}
+                placeholder="Enter the Stipend offered per month" 
+              {% endif %}
+                pattern="\d+(|\.?\d+)" name="ctc" value="{{ name }}" >
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+
+        <div class="col-md-6">
+          <div class="container-fluid ">
+
+            <label for="inputCPI">CPI Cutoff</label>
+              <input type="text" id="cpi" title="Like '8.54'"class="form-control" placeholder="Enter the CPI Required to be eligible" pattern="\d+(|\.?\d+)" name="cpi" value="{{ name }}" required>
+          </div>
+        </div>
+        <div class="col-md-6">
+            <div class="container-fluid ">
+
+              <label for="inputProfile">Profile Title</label>
+                <input type="text" id="profile" title="Like 'Software'"class="form-control" placeholder="Enter the Profile Title (like SDE)" name="profile" value="{{ name }}" required>
+            </div>
           </div>
         </div>
       </div>
 
-        <br>
+        <div class="row">
+        <div class="col-md-12">
+          <div class="container-fluid">
+            <label for="description">Profile Description (Optional)</label>
+            <textarea class="form-control" id="description" name="description" placeholder="Describe the role"> </textarea>
+          </div>
+        </div>
+      </div>
+      <br>
+
+      <input type="hidden" value="{{type}}" name="profile_type" />
 
       <div class="row">
         <div class="col-md-12">

@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 
 from .models import *
 from extra.utilities import *
+from extra.notifications import *
 
 # View for viewing forum and answers page
 @login_required

@@ -13,11 +13,14 @@ class Company(models.Model):
 		return self.name
 
 class Profile(models.Model):
+	title = models.CharField(max_length=100)
+	description = models.TextField(blank=True)
 	company = models.ForeignKey('Company')
 	batches = models.ManyToManyField('basic.Batch', through='CompanyBatchMembership', 
 						through_fields=('company', 'batch'))
-
-	ctc = models.IntegerField(blank=True,null=True)
+	type = models.CharField(max_length=12)
+	ctc = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)
+	cpi_cutoff = models.DecimalField(max_digits=4, decimal_places=2)
 
 	def __unicode__(self):
 		return str(self.company)

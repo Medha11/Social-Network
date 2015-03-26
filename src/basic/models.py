@@ -18,7 +18,7 @@ class UserProfile(models.Model):
 	role = models.CharField(max_length=20, default="Student")
 	tpo = models.BooleanField(default=False)
 
-
+	cpi =  models.DecimalField(blank=True, null=True, max_digits=4, decimal_places=2)
 	user_interests = models.ManyToManyField('rss.Topic',through='rss.Interest', through_fields = ('student','topic'))
 
 	questions_followed =  models.ManyToManyField('forum.ForumQuestion', through='forum.Follows_Question',
@@ -69,8 +69,8 @@ class Membership(models.Model):
 class Notification(models.Model):
 	type = models.CharField(max_length=100)
 	# generic object for type
-	object_id = models.IntegerField(blank = True)
-	user_name = models.CharField(max_length=50)
+	object_id = models.IntegerField()
+	user_name = models.CharField(blank=True, max_length=50)
 	link = models.CharField(max_length=100)
 
 	def __unicode__(self):
