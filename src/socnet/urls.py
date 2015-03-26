@@ -19,6 +19,8 @@ urlpatterns = patterns('',
 	url(r'^forum/', include('forum.urls'), name='forum'),
 	url(r'^ajax/', include('ajax.urls'), name='ajax'),
 	url(r'^tpo/', include('tpo.urls'), name='tpo'),
+	url(r'^accounts/login/', views.login_redirect, name='login_redirect'),
+	
 )
 
 if settings.DEBUG:
