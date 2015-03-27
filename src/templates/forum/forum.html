@@ -29,7 +29,7 @@
         <h4 class="modal-title" id="AssignmentLabel">Create Assignment</h4>
       </div>
       <div class="modal-body">
-        <form id="formform" method="post" action="{% url 'post' %}{{ id }}/0/" 
+        <form id="assignment_form" method="post" action="{% url 'post' %}{{ id }}/0/" 
         enctype="multipart/form-data">
           {% csrf_token %}
           <div class="form-group">
@@ -41,10 +41,11 @@
             <label for="Question" class="control-label">Description: (Optional)</label>
             <textarea class="form-control" id="description" name="description" ></textarea>
           </div>
-          <div class="form-group">
+          <div id="form_group" class="form-group">
          
             <label for="date" class="control-label">Deadline:</label>
-            <input type="text" class="form-control"  id="date" name="date" placeholder="Click to bring datepicker" required>
+            <input type="text" class="form-control"  id="assignment_date" name="date" placeholder="Click to bring datepicker" required>
+            <span id="helpBlock" class="help-block"></span>
           
           </div>
 
@@ -61,7 +62,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" form="formform">Assign</button>
+        <button type="submit" class="btn btn-primary" form="assignment_form">Assign</button>
       </div>
     </div>
   </div>
@@ -301,7 +302,7 @@
                     {% elif question.user == User %}
                       <strong> Asked By: </strong> You <br>
                     {% else %}
-                      <strong> Asked By: </strong> <a href="{% url 'profile' %}{{ question.user.user.username }}"> {{ question.user.user.get_full_name }} </a> <br>
+                      <strong> Asked By: </strong> <a href="{% url 'user_profile' %}{{ question.user.user.username }}"> {{ question.user.user.get_full_name }} </a> <br>
                     {% endif %}
                       <strong> Asked: </strong> {{ question.date|age  }}
                     </span>
@@ -439,7 +440,7 @@
                       {% if file.user == User %}
                         <strong> Asked By: </strong> You <br>
                       {% else %}
-                        <strong> Uploaded By: </strong> <a href="{% url 'profile' %}{{ file.user.user.username }}"> {{ file.user.user.get_full_name }} </a> <br>
+                        <strong> Uploaded By: </strong> <a href="{% url 'user_profile' %}{{ file.user.user.username }}"> {{ file.user.user.get_full_name }} </a> <br>
                       {% endif %}
                         <strong> Uploaded: </strong> {{ file.date|age  }}
                       </span>
@@ -503,6 +504,28 @@ $('#SolutionUpload').on('show.bs.modal', function (e) {
       modal.find('input[id="Solution"]').attr('value',type);
     });
 
+$('#assignment_form').submit(function (e) {
+      e.preventDefault();
+      var d = new Date();
+
+      var month = d.getMonth()+1;
+      var day = d.getDate();
+      var output = d.getFullYear() +
+          (month<10 ? '0' : '') + month +
+          (day<10 ? '0' : '') + day;
+      date = $('#assignment_date').val();
+      a = date.split("/");
+      var compare = a[2]+a[0]+a[1];
+      if(compare.localeCompare(output)<1){
+        $('#form_group').attr('class','form-group has-error');
+        $('#assignment_date').val('');
+        $('#helpBlock').text('Choose a future date.')
+      }
+      else{
+        this.submit();
+      }
+
+  });
 
 $('.ajax').click(function(){
     
@@ -609,7 +632,7 @@ $("#assign_file, #upload_file, #upload_solution").on("change", function(){
 <script src="{% static "javascript/jquery-ui.js" %}"></script>
 
 <script> 
-  $('#date').datepicker(); 
+  $('#assignment_date').datepicker(); 
 </script>
 
 {% endblock %}

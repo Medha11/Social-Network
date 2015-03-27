@@ -114,7 +114,7 @@
                 {% if question.anonymous %}
                   <strong> Posted By: </strong> Anonymous <br>
                 {% else %} 
-                  <strong> Asked By: </strong> <a href="{% url 'profile' %}{{ question.user.user.username }}"> {{ question.user.user.get_full_name }} </a> <br>
+                  <strong> Asked By: </strong> <a href="{% url 'user_profile' %}{{ question.user.user.username }}"> {{ question.user.user.get_full_name }} </a> <br>
                 {% endif %}
                   <strong> Asked: </strong> {{ question.date|age }}
                 </span>
@@ -157,7 +157,7 @@
                     {% if Answer.answer.anonymous %}
                       <strong> Answered By: </strong> Anonymous <br>
                     {% else %}
-                      <strong> Answered By: </strong> <a href="{% url 'profile' %}{{ Answer.answer.user.user.username }}"> {{ Answer.answer.user.user.get_full_name }} </a> <br>
+                      <strong> Answered By: </strong> <a href="{% url 'user_profile' %}{{ Answer.answer.user.user.username }}"> {{ Answer.answer.user.user.get_full_name }} </a> <br>
                     {% endif %}
                       <strong> Answered: </strong> {{ Answer.answer.date|age }}
                   </span>
@@ -184,7 +184,7 @@
                         {% if comment.anonymous %}
                           <strong> --- </strong> Anonymous 
                         {% else %}
-                          <strong> --- </strong> <a href="{% url 'profile' %}{{ comment.user.user.username }}"> {{ comment.user.user.get_full_name }} </a> 
+                          <strong> --- </strong> <a href="{% url 'user_profile' %}{{ comment.user.user.username }}"> {{ comment.user.user.get_full_name }} </a> 
                         {% endif %}
                             ({{ comment.date|age }})
 
