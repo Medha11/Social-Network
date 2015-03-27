@@ -182,6 +182,12 @@ class ConsolidatedProfiles:
 		self.profile = profile
 		self.batches = batches 
 
+class MixedProfiles:
+
+	def __init__(self, internships, jobs):
+		self.internships = internships
+		self.jobs = jobs 
+
 def create_batches(): #Creates a list of objects containing prog and years
 	from basic.models import Batch
 	batches = Batch.objects.all().order_by('branch__programme','year')
@@ -202,7 +208,8 @@ def create_batches(): #Creates a list of objects containing prog and years
 	return batches
 
 def get_consolidated_profiles(profiles):
-	Profiles = []
+	internships = []
+	jobs = []
 	for profile in profiles:
 		batches = profile.batches.order_by('branch__programme','year')
 		list = batches.values('branch__programme','year').distinct()
@@ -213,8 +220,11 @@ def get_consolidated_profiles(profiles):
 			same_batch = batches.filter(branch__programme=programme, year=year).order_by('branch__name')
 			if same_batch:
 				final_batches.append(BatchClass(programme,same_batch,year))
-		Profiles.append(ConsolidatedProfiles(profile,final_batches))
-	return Profiles
+		if profile.type == 'Job':
+			jobs.append(ConsolidatedProfiles(profile,final_batches))
+		else:
+			internships.append(ConsolidatedProfiles(profile,final_batches))
+	return MixedProfiles(internships,jobs)
 
 def get_consolidated_profile(profile):
 

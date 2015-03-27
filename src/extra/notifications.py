@@ -30,6 +30,7 @@ def make_tpo_notifications(profile,batches):
 		students = UserProfile.objects.filter(batch=batch,cpi__gte=profile.cpi_cutoff)
 		for student in students:
 			SetNotification(notification=new_notification,user=student,keyword=id).save()
+			Eligibility(student=student,company=profile).save()
 
 
 def make_notification(course_id,user, question=None, anonymous=False,assignment_id=None): #TODO Reuse code !!!!!!!!!!

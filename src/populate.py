@@ -6,6 +6,7 @@ django.setup()
 from basic.models import *
 from django.contrib.auth.models import User
 from rss.models import *
+from socnet.settings import *
 
 
 #creating branches and batches
@@ -52,20 +53,20 @@ Batch(branch=mba,year=years[1]).save()
 #creating users
 admin=User.objects.create_superuser(email="dasas@ads.com",first_name="Admin", 
 					username="admin", password="root")
-admin = UserProfile(user=admin,reg=str(12311232),batch=cs3,tpo=True)
+admin = UserProfile(user=admin,reg=str(12311232),batch=cs3,tpo=True,cpi=7)
 admin.save()
 
 sid=User.objects.create_user(email="das@ads.com",first_name="sid", last_name="patny", 
 					username="sid", password="123")
 
-sid = UserProfile(user=sid,reg=str(12312),batch=cs3)
+sid = UserProfile(user=sid,reg=str(12312),batch=cs3,cpi=9)
 sid.save()
 
 rohit=User.objects.create_user(email="das@ads.com",first_name="rohit", last_name="thomas", 
 					username="rohit", password="123")
 
 
-rohit=UserProfile(user=rohit,reg=str(12122),batch=it3)
+rohit=UserProfile(user=rohit,reg=str(12122),batch=it3,cpi=8)
 rohit.save()
 
 mishra=User.objects.create_user(email="daasds@ads.com",first_name="AK", last_name="Mishra", 
@@ -107,3 +108,6 @@ Interest(topic=fin, student=admin).save()
 Interest(topic=fin, student=sid).save()
 
 
+import script
+
+script.populate_company()

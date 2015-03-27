@@ -39,7 +39,7 @@
       <br></br>
       <div class="col-md-12">
         <div class="row">
-            <h5> <strong> CPI Cutoff: </strong> {{Profile.profile.cpi_cutoff}}</h5>
+            <h5> <strong> CPI Cutoff: </strong> {{Profile.profile.cpi_cutoff|decimate}}</h5>
         </div>
              
         <div class="row">
@@ -51,7 +51,7 @@
                       Stipend: 
                     {% endif %}
                 </strong> 
-                      ₹ {{Profile.profile.ctc}}
+                      ₹ {{Profile.profile.ctc|decimate}}
                          
                     {% if Profile.profile.type == 'Job' %}
                       Lakhs/annum

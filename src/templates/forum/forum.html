@@ -258,7 +258,6 @@
       {% for question in questions %}
         <div class="panel panel-default">
             
-          <ul class="list-group">
 
              <div class="panel-header">
               {% if question.user.user == user or User.role == "Faculty" %} <!-- Checking if question posted by current user -->
@@ -287,28 +286,28 @@
         
              
             
-              <div class="panel-body" style="background-color:transparent">
-                
-                {{ question.question|safe }}
-
-                <br> <br>
-                  <li class="list-group-item" style="background-color:transparent">
-                      <a href="{% url 'forum' %}{{ id }}/{{ question.id }}" class="btn btn-default btn-lg" >View Answers <span class="badge">{{ question.number_of_answers  }}</span></a>
+            <div class="panel-body" style="background-color:transparent">
               
-                      
-                      <span class="pull-right" >  
-                      {% if question.anonymous %}
-                        <strong> Asked By: </strong> Anonymous <br>
-                      {% elif question.user == User %}
-                        <strong> Asked By: </strong> You <br>
-                      {% else %}
-                        <strong> Asked By: </strong> <a href="{% url 'profile' %}{{ question.user.user.username }}"> {{ question.user.user.get_full_name }} </a> <br>
-                      {% endif %}
-                        <strong> Asked: </strong> {{ question.date|age  }}
-                      </span>
-                  </li>
-                
-              </div>
+              {{ question.question|safe }}
+
+              <br> <br>
+                <li class="list-group-item" style="background-color:transparent">
+                    <a href="{% url 'forum' %}{{ id }}/{{ question.id }}" class="btn btn-default btn-lg" >View Answers <span class="badge">{{ question.number_of_answers  }}</span></a>
+            
+                    
+                    <span class="pull-right" >  
+                    {% if question.anonymous %}
+                      <strong> Asked By: </strong> Anonymous <br>
+                    {% elif question.user == User %}
+                      <strong> Asked By: </strong> You <br>
+                    {% else %}
+                      <strong> Asked By: </strong> <a href="{% url 'profile' %}{{ question.user.user.username }}"> {{ question.user.user.get_full_name }} </a> <br>
+                    {% endif %}
+                      <strong> Asked: </strong> {{ question.date|age  }}
+                    </span>
+                </li>
+              
+            </div>
         </div>
 
       {% endfor %}

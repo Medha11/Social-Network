@@ -4,49 +4,7 @@
 {% load staticfiles %}
 {% block second_content %}
 
-<!-- Post answer or comments -->
-
-
-
-<div class="modal fade" id="post_modal" role="dialog" aria-labelledby="post_modalLabel" aria-hidden="true">
-
-
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="post_modalLabel">???s</h4>
-      </div>
-      <div class="modal-body">
-        <form id="formform" method="post" action="{% url 'post' %}{{ course_id }}/{{ question.id }}/">
-          {% csrf_token %}
-          <div class="form-group">
-            <label for="post" class="control-label"></label>
-            <textarea class="form-control" id="post" name="post" autofocus required></textarea>
-            <input type="text" class="hidden" name="type"  required>  <!-- Sending if answer or comment -->
-            <input type="number" class="hidden" name="answer">
-
-          </div>
-
-          <div class="checkbox">
-            <label>
-              <input type="checkbox" name="check"> Post Anonymously
-            </label>
-          </div>
-
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" form="formform">Post</button>
-      </div>
-    </div>
-  </div>
-
-  
-</div>
-
-
+<link href="{% static "css/preview_image.css" %}" rel="stylesheet">
 <!-- Modal for confirming delete -->
 
 <div class="modal fade" id="delete"  tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
@@ -69,148 +27,84 @@
 
 
 
-<!-- Back button -->
+<!-- <!-- Back button 
 
 
 <a href="{% url 'forum' %}{{ course_id }}" class="btn btn-default btn-lg" ><<</a>
 <br>
 <br>
 
-<!-- Question -->
-
-
-
-    <div class="panel panel-default">
-
-     <ul class="list-group">
-        <div class="panel-header">
-          {% if question.user.user == user or User.role == "Faculty" %}
-            <a data-url="{% url 'delete_post' %}q/{{ course_id }}/{{ question.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:10px; bottom:10px" title="Delete"> <span class="glyphicon glyphicon-remove" ></span></a> <!-- Delete button -->
-          {% endif %}
-
-           <!-- AJAX follow button -->
-
-              {% if User in question.followers.all %}
-                <button title="Unfollow" class="close ajax"  type="button" data-id="{{ question.id }}" id="follow"
-                 style="position:relative; right:10px; bottom:10px"> 
-                <span class="glyphicon glyphicon-star" id="follow_{{ question.id }}"></span></button> 
-              {% else %}
-                <button title="Follow" class="close ajax"  type="button" data-id="{{ question.id }}" id="follow"
-                style="position:relative; right:10px; bottom:10px"> 
-                <span class="glyphicon glyphicon-star-empty" id="follow_{{ question.id }}"></span></button> 
-              {% endif %}
-
-             <h2> &nbsp; {{ question.title }} </h2>
-          
-        </div>
-       
-          <div class="panel-body" style="background-color:transparent">
-            {{ question.question|safe }}
-          <br><br>
-            <li class="list-group-item" style="background-color:transparent">  
-                <button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#post_modal" data-type="Answer" data-ans="" >Answer &raquo;</button>
-
-                <span class="pull-right" > 
-                {% if question.anonymous %}
-                  <strong> Posted By: </strong> Anonymous <br>
-                {% else %} 
-                  <strong> Asked By: </strong> <a href="{% url 'profile' %}{{ question.user.user.username }}"> {{ question.user.user.get_full_name }} </a> <br>
-                {% endif %}
-                  <strong> Asked: </strong> {{ question.date|age }}
-                </span>
-            </li>  
-          </div>
-        </ul>
-
-    </div>
-
-    <!-- Answers and comments -->
-
+ -->
     <!-- Answers -->
-    {% if answers %}
-      <h1> Answers: </h1>
-      {% for Answer in answers %}
-        <div class="panel panel-default" >
+    {% if profiles %}
 
-          <div class="panel-body">   
+      {% for profile in profiles %}
+        <div class="panel panel-default">
+             <div class="panel-header">
 
-            {% if Answer.answer.user.user == user or User.role == "Faculty"%}
-              <a data-url="{% url 'delete_post' %}a/{{ course_id }}/{{ Answer.answer.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:4px; bottom:10px" title="Delete"> <span class="glyphicon glyphicon-remove"></span></a> <!-- Delete button -->
-
-            {% endif %}
-               {{ Answer.answer.answer|safe }}   
-
-              <br><br>
-            <ul class="list-group">
-              <li class="list-group-item">  
-                
-                  <a type="button" data-toggle="modal" data-target="#post_modal" data-type="Comment" data-ans="{{ Answer.answer.id }}" style="cursor:pointer; position:relative; top:5px; color:#656363">Comment</a>
+              <a data-url="#" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:10px; bottom:10px" title="Delete"> <span class="glyphicon glyphicon-remove"></span></a> <!-- Delete button -->
               
-                {% if Answer.comments %}
-                  &nbsp;
-                  <button class="hear glyphicon glyphicon-comment" data-toggle="collapse" href="#collapse{{ Answer.answer.id }}" style="position:relative; top:12px; left:2px;" aria-expanded="false" aria-controls="collapse{{ Answer.answer.id }}">  </button>
 
-                <sup style="color: #000; position:relative; bottom:10px;">{{ Answer.answer.number_of_comments }}</sup>
-                {% endif %}
+              
+              <h2>  &nbsp;  {{ profile.company.name }} </h2> 
+              
+            </div>          
+        
              
-                  <span class="pull-right" >  
-                    {% if Answer.answer.anonymous %}
-                      <strong> Answered By: </strong> Anonymous <br>
-                    {% else %}
-                      <strong> Answered By: </strong> <a href="{% url 'profile' %}{{ Answer.answer.user.user.username }}"> {{ Answer.answer.user.user.get_full_name }} </a> <br>
-                    {% endif %}
-                      <strong> Answered: </strong> {{ Answer.answer.date|age }}
-                  </span>
-              </li> 
-             </ul> 
-          </div>
-         
-
-            <!-- Comments for Answers -->
-        {% if Answer.comments %}
-
-            <div id="collapse{{ Answer.answer.id }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-              <div class="row">
-                <div class="col-md-10 col-md-offset-2">
-                  <div class="container-fluid">
-                    
-                    {% for comment in Answer.comments %}
-                        {% if comment.user.user == user or User.role == "Faculty" %}
-                          <a data-url="{% url 'delete_post' %}c/{{ course_id }}/{{ comment.id }}" type="button" class="close" data-toggle="modal" data-target="#delete" style="position:relative; right:9px; bottom:5px" title="Delete"> <span>&times;</span></a> <!-- Delete button -->
-                        {% endif %}
-
-                        {{ comment.comment|safe }}
-
-                        {% if comment.anonymous %}
-                          <strong> --- </strong> Anonymous 
-                        {% else %}
-                          <strong> --- </strong> <a href="{% url 'profile' %}{{ comment.user.user.username }}"> {{ comment.user.user.get_full_name }} </a> 
-                        {% endif %}
-                            ({{ comment.date|age }})
-
-                      <div class="panel-footer" style="background-color:transparent"> 
-                      </div>
-                      <br>
-                    {% endfor %}
-
+            
+            <div class="panel-body" style="background-color:transparent">
+              
+                  <div class="col-md-12">
+                    <div class="row">
+                        <h5> <strong> Profile Title: </strong> {{profile.title}}</h5>
+                    </div>
+                    <div class="row">
+                        <h5> <strong> Description: </strong> {{profile.description}}</h5>
+                    </div>
+                         
+                    <div class="row">
+                      
+                        <h5> <strong> 
+                                {% if profile.type == 'Job' %}
+                                  Cost to Company: 
+                                {% else %}
+                                  Stipend: 
+                                {% endif %}
+                            </strong> 
+                                  ₹ {{profile.ctc|decimate}}
+                                     
+                                {% if profile.type == 'Job' %}
+                                  Lakhs/annum
+                                {% else %}
+                                  per month 
+                                {% endif %}
+                              <div class="pull-right">
+                                <h3>
+                                  <a href="{% url 'profile' %}{{profile.id}}" id="profile">
+                                    {% if profile.status == 'Registration' %}
+                                        Register
+                                    {% else %}
+                                        View
+                                    {% endif %}
+                                  </a> 
+                                </h3>
+                              </div>
+                         </h5>
+                    </div>
                   </div>
-                </div>
-              </div>
+              
             </div>
-
-        {% endif %}      
         </div>
+
       {% endfor %}
-        &nbsp; <a href="#" class="btn btn-primary btn-lg" >Answer &raquo;</a>
     {% else %}
         <div class="alert alert-info" role="alert">
           <div class="row">
-                &nbsp; &nbsp;<strong> Be the first one to answer!!!! </strong>
+                &nbsp; &nbsp;<strong> You have no profiles currently!!!! </strong>
            </div>
         </div>
       
     {% endif %} 
-  </div>
 
   
 
@@ -218,24 +112,10 @@
 
 {% block script %}
 <!-- Script to decide the attributes of the modal 
-    We can use the same modal for posting both answers and comments
 -->
 
 
   <script>
-
-    $('#post_modal').on('show.bs.modal', function (e) {
-      var button = $(e.relatedTarget); // Button that triggered the modal
-      var type = button.data('type');
-      var answer = button.data('ans') // Extract info from data-* attributes
-      // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-      // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-      var modal = $(this);
-      modal.find('.modal-title').text('Post '+type);
-      modal.find('.modal-body label[for="post"]').text(type+':');
-      modal.find('.modal-body input[name="type"]').val(type);
-      modal.find('.modal-body input[name="answer"]').val(answer);
-    });
 
 
     $('#delete').on('show.bs.modal', function (e) {
@@ -244,19 +124,6 @@
       var modal = $(this);
       modal.find('.modal-body a[id="confirm"]').attr('href', url);
     });
-
-
-// follow button with ajax
-  $('.ajax').click(function(){
-      var button = $(this);
-      var qid = $(this).attr("data-id");
-      $.get('/ajax/follow/', {question_id: qid},
-      function(json){
-          button.attr('title',json.title);
-          document.getElementById("follow_"+qid).className =
-          document.getElementById("follow_"+qid).className.replace(json.before, json.after );
-      });
-  });
 
 
   </script>

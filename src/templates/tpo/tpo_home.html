@@ -75,22 +75,23 @@
 
 
 
-         {% if Profiles %}
+         {% if MixedProfiles.jobs %}
 
 
-
-           <table class="table table-hover table-bordered">
+         <h3> Jobs </h3>
+          <table class="table table-hover table-bordered">
               <thead>
                 <tr>
                   <th> Company </th>
                   <th> Branches Allowed</th>
-                  <th> CTC (INR/Annum) </th>
+                  <th> CTC (Lakh(s) INR/Annum) </th>
                 </tr>
               </thead>
               <tbody>
-              {% for Profile in Profiles %}
+
+              {% for Profile in MixedProfiles.jobs %}
               <tr>
-                  <td> <a href="{% url 'company' %}{{Profile.profile.company.id}}">{{Profile.profile.company.name}} </td>
+                  <td> <a id="profile" href="{% url 'profile' %}{{Profile.profile.id}}">{{Profile.profile.company.name}} ({{Profile.profile.title}}) </td>
                   <td> 
                     {% for Batch in Profile.batches %}
                       <div class="row">
@@ -109,7 +110,52 @@
                   </td>
                   <td> 
                     {% if Profile.profile.ctc %}
-                      {{ Profile.profile.ctc }} 
+                      {{ Profile.profile.ctc|decimate }} 
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+              </tr> 
+              {% endfor %}
+              </tbody>
+            </table>
+
+          {% endif %}
+          {% if MixedProfiles.internships %}
+          <h3> Internships </h3>
+
+           <table class="table table-hover table-bordered">
+              <thead>
+                <tr>
+                  <th> Company </th>
+                  <th> Branches Allowed</th>
+                  <th> Stipend (INR/Month) </th>
+                </tr>
+              </thead>
+              <tbody>
+
+              {% for Profile in MixedProfiles.internships %}
+              <tr>
+                  <td> <a id="profile" href="{% url 'profile' %}{{Profile.profile.id}}">{{Profile.profile.company.name}} ({{Profile.profile.title}})</td>
+                  <td> 
+                    {% for Batch in Profile.batches %}
+                      <div class="row">
+                        <div class="col-md-3">
+                          <label> <strong> {{Batch.programme}} ({{Batch.year|safe}} year)</strong> </label>
+                        </div>
+
+                        <div class="col-md-9">
+                            {% for batch in Batch.batches %}
+                               {{batch.branch.name}},
+                            {% endfor %}
+                        </div>
+                      </div>
+                    {% endfor %}
+
+                  </td>
+                  <td> 
+                    {% if Profile.profile.ctc %}
+                      {{ Profile.profile.ctc|decimate }} 
                     {% else %}
                       -
                     {% endif %}

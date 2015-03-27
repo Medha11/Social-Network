@@ -47,3 +47,11 @@ def age(value):
     if difference <= timedelta(minutes=1):
         return 'just now'
     return '%(time)s ago' % {'time': timesince(value).split(', ')[0]}
+
+
+@register.filter
+def decimate(value):
+	integer = int(value)
+	if integer == value:
+		return str(integer)
+	return str(value)

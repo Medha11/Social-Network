@@ -14,15 +14,19 @@ from extra.notifications import *
 def home(request):
 
 	user=getProfile(request)
+	notifications = get_notifications(user)
 	if user.tpo:
-		notifications = get_notifications(user)
 		profiles = Profile.objects.all()
 		batches = create_batches()
-		Profiles = get_consolidated_profiles(profiles)
-		return render(request,'tpo/tpo_home.html',{'Profiles':Profiles,'User':user,'batches':batches,
+		MixedProfiles = get_consolidated_profiles(profiles)
+		return render(request,'tpo/tpo_home.html',{'MixedProfiles':MixedProfiles,'User':user,'batches':batches,
 										'Notifications':notifications})
 	else:
-		return render(request,'tpo/home.html',{'Profiles':Profiles,'User':user,'batches':batches,
+		eligiblities = Eligibility.objects.filter(student=user)
+		profiles = []
+		for eligiblity in eligiblities:
+			profiles.append(eligiblity.company)
+		return render(request,'tpo/home.html',{'User':user, 'profiles':profiles,
 										'Notifications':notifications})
 		
 	return HttpResponseRedirect('/')
