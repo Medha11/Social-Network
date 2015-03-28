@@ -18,19 +18,33 @@ def until(value):
 		difference = value - now
 	except:
 		return value
-
 	if difference.days>0:
-		return str(difference.days)+' days'
+		ans =  str(difference.days)+' day'
+		if difference.days > 1:
+				ans+='s'
+		return ans
 	else:
 		seconds = int(difference.total_seconds())
+		if seconds < 0:
+			return 'Over'
 		hours = int(seconds/3600)
 		minutes = int(seconds/60)
 		if hours>0:
-			return str(hours)+' hours'
+			ans = str(hours)+' hour'
+			if hours>1:
+				ans+='s'
+			return ans
+
 		elif minutes>0:
-			return str(minutes)+ ' minutes'
+			ans = str(minutes)+ ' minute'
+			if minutes>1:
+				ans+='s'
+			return ans
 		else:
-			return str(seconds)+' seconds'
+			ans = str(seconds)+' second'
+			if seconds>1:
+				ans+='s'
+			return ans
 
 
 
@@ -51,7 +65,9 @@ def age(value):
 
 @register.filter
 def decimate(value):
+	value = float(value)
 	integer = int(value)
 	if integer == value:
 		return str(integer)
+
 	return str(value)

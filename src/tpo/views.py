@@ -16,7 +16,7 @@ def home(request):
 	user=getProfile(request)
 	notifications = get_notifications(user)
 	if user.tpo:
-		profiles = Profile.objects.all()
+		profiles = Profile.objects.all().order_by('company__name')
 		batches = create_batches()
 		MixedProfiles = get_consolidated_profiles(profiles)
 		return render(request,'tpo/tpo_home.html',{'MixedProfiles':MixedProfiles,'User':user,'batches':batches,
@@ -77,12 +77,12 @@ def add_profile(request):
 				ctc = request.POST['ctc']
 				type = request.POST['profile_type']
 				title = request.POST['profile']
-				description = request.POST['description']
+				description = request.POST['description'].replace('\n','<br>')
 				cpi = request.POST['cpi']
 				if Company.objects.filter(id=company_id).exists():
 					company = Company.objects.get(id=company_id)
 					new_profile=Profile(company=company,cpi_cutoff=cpi,description=description,type=type,
-																title=title)
+															title=title,status='Registration')
 					if ctc:
 						new_profile.ctc=ctc
 					new_profile.save()
@@ -113,6 +113,48 @@ def profile(request,profile_id):
 		user=getProfile(request)
 		notifications = get_notifications(user)
 		profile = Profile.objects.get(id=profile_id)
-		new_Profile = get_consolidated_profile(profile)
+		new_Profile = get_consolidated_profile(profile,user)
 		return render(request,'tpo/profile.html',{'User':user,'Profile':new_Profile,'Notifications':notifications})
+	return HttpResponseRedirect('/tpo/')
+
+@login_required
+def delete(request,profile_id):
+	user=getProfile(request)
+	if Profile.objects.filter(id=profile_id).exists():
+		profile = Profile.objects.get(id=profile_id)
+		if Eligibility.objects.filter(student=user,company=profile).exists():
+			Eligibility.objects.get(student=user,company=profile).delete()
+			SetNotification.objects.get(user=user,keyword='tpo'+str(profile_id)).delete()
+	return HttpResponseRedirect('/tpo/')
+
+@login_required
+def qualify(request,profile_id,user_name=None):
+	user=getProfile(request)
+	if Profile.objects.filter(id=profile_id).exists():
+		profile = Profile.objects.get(id=profile_id)
+		# if user_name and user.tpo: #for future qualifications 
+		# 	requested_user = getProfile(request,username=user_name)
+		# 	profile = Profile.objects.get(id=profile_id)
+		# 	if Eligibility.objects.filter(student=requested_user,company=profile).exists():
+		# 		Eligibility.objects.get(student=requested_user,company=profile).delete()
+		# 		SetNotification.objects.get(user=requested_user,keyword='tpo'+str(profile_id)).delete()
+		# 		Qualified(student=requested_user,company=profile).save()
+		if profile.status == 'Registration':
+			if Eligibility.objects.filter(student=user,company=profile).exists():
+				SetNotification.objects.get(user=user,keyword='tpo'+str(profile_id)).delete()
+				Qualified(student=user,company=profile).save()
+	return HttpResponseRedirect('/tpo/')
+
+
+@login_required
+def candidates(request,profile_id):
+
+	if Profile.objects.filter(id=profile_id).exists():
+		user=getProfile(request)
+		notifications = get_notifications(user)
+		profile = Profile.objects.get(id=profile_id)
+		candidates = profile.candidates.all().order_by('user__first_name','user__last_name')
+		CandidateProfile = NewProfile(profile,candidates)
+		return render(request,'tpo/candidates.html',{'User':user,'Profile':CandidateProfile,
+											'Notifications':notifications})
 	return HttpResponseRedirect('/tpo/')

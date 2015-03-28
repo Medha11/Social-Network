@@ -360,7 +360,13 @@
                 {% endif %}
 
                 {% if User.role == 'Student' %}
-                  {% if assignment.assignment in User.pending_assignments.all %}
+                  {% if assignment.assignment.deadline|until == 'Over' %}
+                    {% if assignment.assignment in User.pending_assignments.all %}
+                      <strong style="color:#F60E0E"> Assignment Not Submitted </strong>
+                    {% else %}
+                      <strong style="color:rgba(10, 170, 6, 1)"> Assignment was successfully submitted </strong>
+                    {% endif %}
+                  {% elif assignment.assignment in User.pending_assignments.all %}
 
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-url="{% url 'post' %}{{ id }}/{{ assignment.assignment.id }}/" data-type="Solution" data-target="#SolutionUpload" >Submit</button> 
 
@@ -379,7 +385,11 @@
                       {% endif %} -->
                         <strong> Assigned: </strong> {{ assignment.assignment.date|age  }}
                         <br>
-                        <strong> Time left: </strong> {{ assignment.assignment.deadline|until  }}
+                        {% if assignment.assignment.deadline|until != 'Over' %}
+                         <strong> Time left: </strong> {{ assignment.assignment.deadline|until  }}
+                        {% elif User.role == 'Faculty' %}
+                          <strong style="color:#F60E0E"> Time Completed!!! </strong>
+                        {% endif %}
                       </span>
                   </li>
                 

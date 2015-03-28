@@ -29,3 +29,9 @@ box-shadow: rgba(0,0,0,0.4) 0 2px 5px;
     cursor:pointer; 
     text-decoration: none;
 }
+
+#link2{
+    cursor:pointer; 
+    color:#333;
+    text-decoration: none;
+}

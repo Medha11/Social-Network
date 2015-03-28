@@ -10,10 +10,10 @@ from socnet.settings import *
 
 
 #creating branches and batches
-
+print 'Creating Branches and Batches...',
 it = Branch(name="Information Technology",programme="B.Tech")
 cs = Branch(name = "Computer Science",programme="B.Tech")
-ece = Branch(name = "Electronic And Communications",programme="B.Tech")
+ece = Branch(name = "Electronics And Communications",programme="B.Tech")
 
 branches = [it,cs,ece]
 branches.append(Branch(name = "Chemical",programme="B.Tech"))
@@ -48,7 +48,8 @@ for branch in branches:
 
 Batch(branch=mba,year=years[1]).save()
 
-
+print 'Done'
+print 'Creating Users and Profiles...',
 
 #creating users
 admin=User.objects.create_superuser(email="dasas@ads.com",first_name="Admin", 
@@ -76,13 +77,19 @@ mishra = UserProfile(user=mishra, role="Faculty",tpo=True)
 mishra.save()
 
 
+print 'Done'
 
+
+print 'Creating Courses...',
 #creating courses
 dbms = Course(name="DBMS",course_id="CS101")
 dbms.save()
 
 wire = Course(name="Wireless",course_id="CS1201")
 wire.save()
+
+print 'Done'
+print 'Assigning Courses...',
 
 #assigning course
 
@@ -93,11 +100,16 @@ Membership(member=sid,course=dbms).save()
 Membership(member=admin,course=wire).save()
 Membership(member=sid,course=wire).save()
 
+print 'Done'
+print 'Creating Topics...',
+
 #creating topics
 tech = Topic(name="Tech")
 tech.save()
 fin = Topic(name="Finance")
 fin.save()
+print 'Done'
+print 'Creating Interests...',
 
 #adding interests
 Interest(topic=tech, student=admin).save()
@@ -107,7 +119,11 @@ Interest(topic=tech, student=mishra).save()
 Interest(topic=fin, student=admin).save()
 Interest(topic=fin, student=sid).save()
 
+print 'Done'
+from rss import rssCrawler
 
+rssCrawler.rssTech()
+rssCrawler.rssFinance()
 import script
 
 script.populate_company()

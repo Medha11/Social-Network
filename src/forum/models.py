@@ -45,6 +45,7 @@ class Assignment(models.Model):
 	course = models.ForeignKey('basic.Course')
 	deadline = models.DateTimeField()
 	file = models.FileField(upload_to=upload_to_function)
+	status = models.CharField(max_length=20)
 
 	def __unicode__(self):
 		return self.title

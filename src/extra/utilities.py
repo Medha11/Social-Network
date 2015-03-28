@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
 from basic.models import *
-
+from tpo.models import *
 from socnet import settings
 from rss.models import *
 
@@ -96,6 +96,20 @@ def authorize(profile, course_id):
 def check_validity(object, course_id): #function checks if object belongs to course
 		return str(object.course.id) == str(course_id)
 
+def check_assignment(id):
+	from forum.models import Assignment
+	if Assignment.objects.filter(id=id).exists():
+		assignment = Assignment.objects.get(id=id)
+		if assignment.status == 'Ongoing':
+			from datetime import datetime
+			print assignment.title
+			if datetime.now() > assignment.deadline:
+				Notification.objects.filter(type='Assignment', object_id=assignment.course.id)[0].delete()
+				assignment.status = 'Completed'
+				assignment.save()
+				return False
+		return True
+
 
 #This class is used to create an object for the html which incorporates both answers and comments
 
@@ -175,12 +189,18 @@ class BatchListClass:
 	def __init__(self, programme, years):
 		self.programme = programme
 		self.years = years 
+
+class NewProfile:
+	def __init__(self, profile, candidates):
+		self.profile = profile
+		self.candidates = candidates 
  
 class ConsolidatedProfiles:
 
-	def __init__(self, profile, batches):
+	def __init__(self, profile, batches, eligible=False):
 		self.profile = profile
 		self.batches = batches 
+		self.eligible = eligible
 
 class MixedProfiles:
 
@@ -226,7 +246,7 @@ def get_consolidated_profiles(profiles):
 			internships.append(ConsolidatedProfiles(profile,final_batches))
 	return MixedProfiles(internships,jobs)
 
-def get_consolidated_profile(profile):
+def get_consolidated_profile(profile,user):
 
 	batches = profile.batches.order_by('branch__programme','year')
 	list = batches.values('branch__programme','year').distinct()
@@ -237,7 +257,11 @@ def get_consolidated_profile(profile):
 		same_batch = batches.filter(branch__programme=programme, year=year).order_by('branch__name')
 		if same_batch:
 			final_batches.append(BatchClass(programme,same_batch,year))
-	Profile=ConsolidatedProfiles(profile,final_batches)
+	if Eligibility.objects.filter(student=user,company=profile).exists():
+		eligible = True
+	else:
+		eligible = False
+	Profile=ConsolidatedProfiles(profile,final_batches,eligible)
 	return Profile
 
 

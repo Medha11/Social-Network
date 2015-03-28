@@ -70,10 +70,6 @@
 
 
 
-<br></br>
-<br>
-
-
 
          {% if MixedProfiles.jobs %}
 
@@ -82,9 +78,10 @@
           <table class="table table-hover table-bordered">
               <thead>
                 <tr>
-                  <th> Company </th>
-                  <th> Branches Allowed</th>
-                  <th> CTC (Lakh(s) INR/Annum) </th>
+                  <th class="col-md-2"> Company </th>
+                  <th class="col-md-6"> Branches Allowed</th>
+                  <th class="col-md-2"> CTC (Lakh(s) INR/Annum) </th>
+                  <th class="col-md-2"> Candidates </th>
                 </tr>
               </thead>
               <tbody>
@@ -95,11 +92,11 @@
                   <td> 
                     {% for Batch in Profile.batches %}
                       <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                           <label> <strong> {{Batch.programme}} ({{Batch.year|safe}} year)</strong> </label>
                         </div>
 
-                        <div class="col-md-9">
+                        <div class="col-md-8">
                             {% for batch in Batch.batches %}
                                {{batch.branch.name}},
                             {% endfor %}
@@ -115,6 +112,7 @@
                       -
                     {% endif %}
                   </td>
+                  <td> <a id="profile" href="{% url 'profile_candidates' %}{{Profile.profile.id}}">View Candidates </td>
               </tr> 
               {% endfor %}
               </tbody>
@@ -127,9 +125,10 @@
            <table class="table table-hover table-bordered">
               <thead>
                 <tr>
-                  <th> Company </th>
-                  <th> Branches Allowed</th>
-                  <th> Stipend (INR/Month) </th>
+                  <th class="col-md-2"> Company </th>
+                  <th class="col-md-6"> Branches Allowed</th>
+                  <th class="col-md-2"> Stipend (INR/Month) </th>
+                  <th class="col-md-2"> Candidates </th>
                 </tr>
               </thead>
               <tbody>
@@ -140,11 +139,11 @@
                   <td> 
                     {% for Batch in Profile.batches %}
                       <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                           <label> <strong> {{Batch.programme}} ({{Batch.year|safe}} year)</strong> </label>
                         </div>
 
-                        <div class="col-md-9">
+                        <div class="col-md-8">
                             {% for batch in Batch.batches %}
                                {{batch.branch.name}},
                             {% endfor %}
@@ -160,6 +159,7 @@
                       -
                     {% endif %}
                   </td>
+                  <td> <a id="profile" href="{% url 'profile_candidates' %}{{Profile.profile.id}}">View Candidates </td>
               </tr> 
               {% endfor %}
               </tbody>

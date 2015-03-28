@@ -34,6 +34,7 @@ opener.addheaders = [('User-agent', 'Mozilla/5.0')]
     # contents = "".join(str(item) for item in tag.contents)
 # print contents		
 def rssTech():
+	print 'Adding Tech feeds...',
 	feed_xml = opener.open('http://www.theverge.com/rss/frontpage').read()
 #print feed_xml[:10000]
 	feed = BeautifulSoup(feed_xml.decode('utf8'))
@@ -70,11 +71,12 @@ def rssTech():
 		i+=1
 	
 	db.commit()	
-
+	print 'Done'
 
 
 
 def rssFinance():
+	print 'Adding Finance feeds... ',
 	feed_xml = opener.open('http://economictimes.indiatimes.com/rssfeeds/13352306.cms').read()
 #print feed_xml[:10000]
 	feed = BeautifulSoup(feed_xml.decode('utf8'))
@@ -96,7 +98,6 @@ def rssFinance():
 		text.append(cleantext)
 		#print text[j]
 		#print '-------------------'
-		print text[0]
 		j+=1
 
 	i=2
@@ -106,8 +107,6 @@ def rssFinance():
 		i+=1
 	
 	db.commit()	
+	print 'Done'
 	
 	
-	
-rssTech()
-rssFinance()

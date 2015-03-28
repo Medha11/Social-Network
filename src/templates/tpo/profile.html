@@ -6,13 +6,28 @@
 
 <link href="{% static "css/preview_image.css" %}" rel="stylesheet">
 
+<div class="modal fade" id="delete"  tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="deleteLabel">Are you sure you want to opt out of the company's registration process????</h4>
+      </div>
 
+      <div class="modal-body">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+        <a type="submit" class="btn btn-success" id="confirm">Yes</a>
+      </div>
+      
+    </div>
+  </div>
+</div>
 
 
       <h1 class="page-header"> 
         <div class="row">
           <div class="col-md-2">
-            <a id="link" href="{{ Profile.profile.company.website }}">{{Profile.profile.company.name}}  </a>
+            <a id="link" href="{{ Profile.profile.company.website }}/">{{Profile.profile.company.name}}  </a>
           </div>
           <div class="col-md-10">
             <div class="pull-right">
@@ -33,10 +48,11 @@
         </div>
       </h1>
 
-
+    {% if Profile.profile.description != ' ' %}
       <h4> <strong> Profile Description </strong> </h4>
       {{Profile.profile.description}}
       <br></br>
+    {% endif %}
       <div class="col-md-12">
         <div class="row">
             <h5> <strong> CPI Cutoff: </strong> {{Profile.profile.cpi_cutoff|decimate}}</h5>
@@ -76,7 +92,14 @@
 
         </div>
       {% endfor %}
+      <br>
       <div class="row">
+        {% if Profile.profile.status == 'Registration' and Profile.eligible and User not in Profile.profile.candidates.all %}
+        <div class="col-md-12">
+         <a class="btn btn-primary" type="button" data-toggle="modal" data-target="#delete" data-url="{% url 'profile_qualify' %}{{Profile.profile.id}}" data-text = "Are you sure you want to register for {{Profile.profile.company.name}}????">  Register  </a>
+         <a class="btn btn-danger" data-url="{% url 'delete_profile' %}{{Profile.profile.id}}"  type="button"  data-toggle="modal" data-target="#delete" title="Delete" data-text="Are you sure you want to opt out of the company's registration process????"> Dismiss </a>
+        {% endif %}
+        </div>
       </div>
 
 
@@ -88,3 +111,25 @@
 
 {% endblock %}
 
+{% block script %}
+<!-- Script to decide the attributes of the modal 
+-->
+
+
+  <script>
+
+
+    $('#delete').on('show.bs.modal', function (e) {
+      var button = $(e.relatedTarget); // Button that triggered the modal
+      var url = button.data('url');
+      var text = button.data('text');
+      var modal = $(this);
+      modal.find('.modal-body a[id="confirm"]').attr('href', url);
+      modal.find('.modal-header h4[id="deleteLabel"]').text(text)
+    });
+
+
+  </script>
+
+
+{% endblock %}

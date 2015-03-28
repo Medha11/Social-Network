@@ -1,0 +1,54 @@
+
+{% extends 'second_base.html' %}
+{% load time_short %}
+{% load staticfiles %}
+{% block second_content %}
+
+
+<!-- Back button -->
+
+<link href="{% static "css/preview_image.css" %}" rel="stylesheet">
+
+<h1 class="page-header">
+   <!-- <a class="pull-right close"  href="{% url 'forum' %}{{ course_id }}/#assignment_tab"><span class="glyphicon glyphicon-triangle-left" style="font-size:30px;" title="Add Profile"> </span></a> -->
+
+    {{ Profile.profile.company.name }}
+    <h6 style="font-style:italic">{{Profile.profile.title}}</h6>
+    <br>
+</h1>
+
+          
+   {% if Profile.candidates %}
+
+     <table class="table table-hover table-bordered">
+        <thead>
+          <tr>
+            <th> Name </th>
+            <th> Programme </th>
+            <th> Year </th>
+            <th> Branch </th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for candidate in Profile.candidates %}
+        <tr>
+            <td> <a id="profile" href="{% url 'user_profile' %}{{ candidate.user.username }}" >{{candidate.user.get_full_name}} </a></td>
+            <td> {{ candidate.batch.branch.programme }}</td>
+            <td>  {{candidate.batch.year|safe }} Year </td>
+            <td>  {{candidate.batch.branch.name}} </td>
+        </tr> 
+        {% endfor %}
+        </tbody>
+      </table>
+
+    {% else %}
+      <div class="alert alert-info" role="alert">
+          <div class="row">
+              &nbsp; &nbsp;<strong> No one has registered yet!!!! </strong>
+         </div>
+      </div>
+    {% endif %}
+   
+
+
+{% endblock %}

@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from .models import *
 from extra.utilities import *
 from extra.notifications import *
+from datetime import datetime
+
 
 # View for viewing forum and answers page
 @login_required
@@ -28,10 +30,14 @@ def forum(request, course_id, question_id=None):
 			notifications = update_notifications(user, course_id)
 			course = Course.objects.get(id=course_id)
 			questions = ForumQuestion.objects.filter(course = course).order_by('-date')
-			assignments = Assignment.objects.filter(course = course).order_by('-date')
+			assignments = Assignment.objects.filter(course = course).order_by('deadline')
+			new_assignments = assignments.filter(deadline__gt = datetime.now())
+			old_assignments = assignments.filter(deadline__lte = datetime.now())
 			Assignments = []
-			for assignment in assignments:
+			for assignment in new_assignments:
 				Assignments.append(AssignmentClass(assignment,user))
+			for assignment in old_assignments:
+				Assignments.append(AssignmentClass(assignment,user))				
 			files = ForumFile.objects.filter(course = course).order_by('-date')
 			return render(request,'forum/forum.html',{'questions':questions,'User':user,'id':course_id, 
 														'Assignments':Assignments,'files':files,
@@ -173,7 +179,7 @@ def post(request,course_id=None,object_id=None):
 				description = request.POST['description'].replace('\n','<br>')
 				deadline = request.POST['date']
 				course=Course.objects.get(id=course_id)
-				date = deadline[6:]+'-'+deadline[:2]+'-'+deadline[3:5]
+				date = deadline[6:]+'-'+deadline[:2]+'-'+deadline[3:5]+' 23:59'
 				if not description:
 					description = 'No Description'
 				new_assignment = Assignment(title=title, description=description, 
@@ -205,30 +211,31 @@ def post(request,course_id=None,object_id=None):
 				return HttpResponseRedirect('/forum/'+course_id+'/#file_tab')
 
 			elif type=='Solution':
-				if Assignment.objects.filter(id=object_id).exists():
-					assignment = Assignment.objects.get(id=object_id)
-					course=Course.objects.get(id=course_id)
-					if check_validity(assignment,course_id):
-						new_solution = AssignmentSolution(assignment= assignment, 
-								course=course, user = user)
-						new_solution.file = request.FILES['file']
-						new_solution.save()
-						notifications = update_notifications(user, course_id,assignment_id=object_id)
-						Pending.objects.get(assignment=assignment,student=user).delete()
-						return HttpResponseRedirect('/forum/'+course_id+'/#assignment_tab')
+				if check_assignment(object_id):
+					if Assignment.objects.filter(id=object_id).exists():
+						assignment = Assignment.objects.get(id=object_id)
+						course=Course.objects.get(id=course_id)
+						if check_validity(assignment,course_id):
+							new_solution = AssignmentSolution(assignment= assignment, 
+									course=course, user = user)
+							new_solution.file = request.FILES['file']
+							new_solution.save()
+							notifications = update_notifications(user, course_id,assignment_id=object_id)
+							Pending.objects.get(assignment=assignment,student=user).delete()
+							return HttpResponseRedirect('/forum/'+course_id+'/#assignment_tab')
 
 			elif type=='SolutionResubmit':
-					assignment = Assignment.objects.get(id=object_id)
-					if check_validity(assignment,course_id):
-						try:
-							print "dsa"
-							solution = AssignmentSolution.objects.get(assignment= assignment,user = user)
-							solution.file.delete()
-							print "dsa"
-							solution.file = request.FILES['file']
-							solution.save()
-							return HttpResponseRedirect('/forum/'+course_id+'/#assignment_tab')
-						except:None
+				if check_assignment(object_id):
+					if Assignment.objects.filter(id=object_id).exists():
+						assignment = Assignment.objects.get(id=object_id)
+						if check_validity(assignment,course_id):
+							try:
+								solution = AssignmentSolution.objects.get(assignment= assignment,user = user)
+								solution.file.delete()
+								solution.file = request.FILES['file']
+								solution.save()
+								return HttpResponseRedirect('/forum/'+course_id+'/#assignment_tab')
+							except:None
 
 					
 

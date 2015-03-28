@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from basic.models import *
 from tpo.models import *
+from extra.utilities import *
 
 def update_notifications(user, id,question_id=None,assignment_id=None):  #functions deletes visited notifications
 	link = '/forum/'+id
@@ -29,7 +30,7 @@ def make_tpo_notifications(profile,batches):
 	for batch in batches:
 		students = UserProfile.objects.filter(batch=batch,cpi__gte=profile.cpi_cutoff)
 		for student in students:
-			SetNotification(notification=new_notification,user=student,keyword=id).save()
+			SetNotification(notification=new_notification,user=student,keyword='tpo'+id).save()
 			Eligibility(student=student,company=profile).save()
 
 
@@ -84,6 +85,8 @@ class ConsolidatedNotifications: #class for returning consolidated notifications
 
 def get_notifications(user): #function for consolidated notifications
 	list = []
+	for assignment in user.pending_assignments.all():
+		check_assignment(assignment.id)
 	if user.notifications.filter(type='Question').exists():
 		questions = user.notifications.filter(type='Question')
 		for course in user.courses.all():

@@ -22,6 +22,8 @@ class Profile(models.Model):
 	ctc = models.DecimalField(blank=True, null=True, max_digits=10, decimal_places=2)
 	cpi_cutoff = models.DecimalField(max_digits=4, decimal_places=2)
 	status = models.CharField(max_length=20)
+	candidates = models.ManyToManyField('basic.UserProfile', through='Qualified', 
+						through_fields=('company', 'student'))
 
 	def __unicode__(self):
 		return str(self.company)
@@ -37,3 +39,13 @@ class Eligibility(models.Model):
 	student = models.ForeignKey('basic.UserProfile')
 	def __unicode__(self):
 		return str(self.student)+'->'+str(self.company)
+	class Meta:
+		ordering = ('student__reg',)
+
+class Qualified(models.Model):
+	company = models.ForeignKey('Profile')
+	student = models.ForeignKey('basic.UserProfile')
+	def __unicode__(self):
+		return str(self.student)+'->'+str(self.company)
+	class Meta:
+		ordering = ('student__reg',)
